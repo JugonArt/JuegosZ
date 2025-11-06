@@ -1,0 +1,463 @@
+/* Objects.module.css - Estilos para objetos del juego 1942 */
+
+/* Clases de utilidad */
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.inset0 {
+  inset: 0;
+}
+
+.top0 {
+  top: 0;
+}
+
+.bottom0 {
+  bottom: 0;
+}
+
+.left0 {
+  left: 0;
+}
+
+.right0 {
+  right: 0;
+}
+
+.wFull {
+  width: 100%;
+}
+
+.hFull {
+  height: 100%;
+}
+
+.h32 {
+  height: 8rem;
+}
+
+.opacity20 {
+  opacity: 0.2;
+}
+
+.opacity30 {
+  opacity: 0.3;
+}
+
+.opacity70 {
+  opacity: 0.7;
+}
+
+.pointerEventsNone {
+  pointer-events: none;
+}
+
+.overflowHidden {
+  overflow: hidden;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.shadow2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.flexJustifyCenter {
+  display: flex;
+  justify-content: center;
+}
+
+.textWhite {
+  color: #ffffff;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.textXs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.mt4 {
+  margin-top: 1rem;
+}
+
+.maxW4xl {
+  max-width: 56rem;
+}
+
+.px3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.z10 {
+  z-index: 10;
+}
+
+.top4 {
+  top: 1rem;
+}
+
+.top16 {
+  top: 4rem;
+}
+
+.left4 {
+  left: 1rem;
+}
+
+.right4 {
+  right: 1rem;
+}
+
+.left50 {
+  left: 50%;
+}
+
+.transform {
+  transform: var(--tw-transform);
+}
+
+.translateXMinus50 {
+  --tw-translate-x: -50%;
+  transform: translateX(var(--tw-translate-x));
+}
+
+.textYellow300 {
+  color: #fcd34d;
+}
+
+.textRed300 {
+  color: #fca5a5;
+}
+
+.textSm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.bgRed900 {
+  background-color: #7f1d1d;
+}
+
+.bgBlack {
+  background-color: #000000;
+}
+
+.bgOpacity80 {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.borderYellow400 {
+  border-color: #facc15;
+}
+
+.borderRed400 {
+  border-color: #f87171;
+}
+
+.animatePulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.bgGradientToB {
+  background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+}
+
+.bgGradientToT {
+  background-image: linear-gradient(to top, var(--tw-gradient-stops));
+}
+
+.fromBlue900 {
+  --tw-gradient-from: #1e3a8a;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(30, 58, 138, 0));
+}
+
+.viaTransparent {
+  --tw-gradient-stops: var(--tw-gradient-from), transparent, var(--tw-gradient-to, rgba(0, 0, 0, 0));
+}
+
+.toTransparent {
+  --tw-gradient-to: transparent;
+}
+
+.duration200 {
+  transition-duration: 200ms;
+}
+
+.transitionAll {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.gameBorder {
+  border: 2px solid #4a5568;
+}
+
+.enemyBullet {
+  background: #ff4444;
+  border-radius: 10vw;
+  box-shadow: 0 0 10px #ff4444, inset 0 0 3px #ff4444;
+}
+
+/* Jugadores */
+.player1{
+  background: url(../../../assets/1942/Gokuorange.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Gokuorange.avif');
+  }
+    transform: scale(2) !important;
+    transition: 0.3s ease-in-out;
+}
+
+.player1.looping{
+  background: url(../../../assets/1942/GokuLoop.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/GokuLoop.avif');
+  }
+    animation: 0.3s looping forwards infinite;
+}
+
+.player2{
+  background: url(../../../assets/1942/MrPopo.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/MrPopo.avif');
+  }
+    transform: scale(3) scaleX(-1)!important;
+    transition: 0.3s ease-in-out;
+}
+
+.player2.looping{
+  background: url(../../../assets/1942/MrPopoLoop.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/MrPopoLoop.avif');
+  }
+    animation: 0.3s looping forwards infinite;
+    transform: scale(4) scaleX(1);
+}
+
+@keyframes looping {
+    0%, 100%{opacity: 0}
+    50% {opacity: 0.5;}
+}
+
+/* Enemigos */
+.Enemy1{
+  background: url(../../../assets/1942/Pilot1.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Pilot1.avif');
+  }
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.322));
+}
+
+.Enemy2{
+  background: url(../../../assets/1942/Pilot2.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Pilot2.avif');
+  }
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.322));
+}
+
+.Enemy3{
+  background: url(../../../assets/1942/Pilot3.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Pilot3.avif');
+  }
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.322));
+}
+
+.Enemy4{
+  background: url(../../../assets/1942/Pilot6.webp) center / 70% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Pilot6.avif');
+  }
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.322));
+}
+
+.Enemy5{
+  background: url(../../../assets/1942/Pilot5.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Pilot5.avif');
+  }
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.322));
+}
+
+.Enemy6{
+  background: url(../../../assets/1942/Pilot4.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Pilot4.avif');
+  }
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.322));
+}
+
+.Enemy7{
+  background: url(../../../assets/1942/pilot7.webp) center / 100% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/pilot7.avif');
+  }
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.322));
+}
+
+.Enemy8{
+  background: url(../../../assets/1942/Pilot8.webp) center / 60% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Pilot8.avif');
+  }
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.322));
+}
+
+.flipPlayer1{
+    transform: scale(2) scaleX(-1) !important;
+}
+
+.flipPlayer2{
+    transform: scale(3) scaleX(1) !important;
+}
+
+.flipEnemy{
+    transform: scale(4) scaleX(-1) !important;
+}
+
+.Wingmans{
+    /* Puedes usar una imagen distinta para el wingman si lo deseas */
+  background: url(../../../assets/1942/krillin.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/krillin.avif');
+  }
+    transform: scale(2.5) scaleX(-1); /* Reducir el tamaño para que se vea como un wingman */
+    margin-top: 1vw;
+    animation: 1s wingmanfly forwards infinite;
+}
+
+.flipWingman {
+    transform: scale(2.5) scaleX(1); /* Mantener el mismo tamaño y reflejar horizontalmente */
+    margin-top: 1vw;
+}
+
+@keyframes wingmanfly {
+    0%, 100%{margin-top: 1vw;}
+    50% {margin-top: 0;}
+}
+
+/* Power-ups */
+.double {
+  /* Estilos específicos para el power-up "double" */
+  background-color: #ff6600; /* Color ya definido, pero puedes añadir más estilos */
+}
+
+.triple {
+  /* Estilos específicos para el power-up "triple" */
+  background-color: #ff0066;
+}
+
+.wingman{
+  background: url(../../../assets/1942/KrillinIcon.webp) center / contain no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/KrillinIcon.avif');
+  }
+    transform: scale(1.5);
+    filter: drop-shadow(0 0 5px yellow);
+    animation: 1s PowerUp ease-in-out infinite;
+}
+
+.wingman.poweruptext{
+    display: none !important;
+}
+
+.double{
+  background: url(../../../assets/1942/X2ki.webp) center / contain no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/X2ki.avif');
+  }
+    transform: scale(1.5);
+    filter: drop-shadow(0 0 5px var(--ki));
+    animation: 1s PowerUp ease-in-out infinite;
+}
+
+.triple{
+  background: url(../../../assets/1942/X3ki.webp) center / contain no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/X3ki.avif');
+  }
+    filter: drop-shadow(0 0 5px VAR(--ki));
+    animation: 1s PowerUp ease-in-out infinite;
+}
+
+.loops {
+  background: url(../../../assets/1942/Loop.webp) center / 100% no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Loop.avif');
+  }
+    filter: drop-shadow(0 0 5px VAR(--ki));
+    animation: 1s PowerUp ease-in-out infinite;
+    border-radius: 10vw;
+}
+
+.revive{
+  background: url(../../../assets/1942/SenzuBag.webp) center / 100% no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/SenzuBag.avif');
+  }
+    filter: drop-shadow(0 0 5px VAR(--redki));
+    animation: 1s PowerUp ease-in-out infinite;
+    border-radius: 10vw;
+}
+
+@keyframes PowerUp {
+    0%, 100%{transform: scale(1)}
+    50% {transform: scale(1.3)}
+}
+
+/* Otros elementos */
+.nimbusTrail {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(255, 255, 0, 0.5); /* Semi-transparent yellow */
+  border-radius: 50%;
+  filter: blur(10px);
+  pointer-events: none; /* Allows clicks to pass through */
+  z-index: -1; /* Puts the trail behind the player */
+  transition: transform 0.1s linear; /* Smooths out the movement */
+}
+
+.player1bullet{
+    background: var(--text);
+    border-radius: 10vw;
+    box-shadow: 0 0 10px var(--ki), inset 0 0 3px var(--ki);
+}
+
+.player2bullet{
+    background: var(--text);
+    border-radius: 10vw;
+    box-shadow: 0 0 10px var(--redki), inset 0 0 3px var(--redki);
+}

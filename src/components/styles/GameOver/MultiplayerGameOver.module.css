@@ -1,0 +1,203 @@
+/* Estilos específicos para MultiplayerGameOver */
+
+/* Importar estilos base */
+@import './GameOverBase.module.css';
+
+/* Container principal para multiplayer */
+.multiplayerGameOverContainer {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  /* allow child sections to stretch vertically to fill available space */
+  align-items: stretch;
+  min-height: 400px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Secciones de cada jugador */
+.playerGameOverSection {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: 2vw;
+  padding: 1.5rem;
+  min-width: 300px;
+  min-height: 0; /* allow flex children to shrink properly */
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.playerGameOverSection:hover {
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.playerGameOverSection.winner {
+  border-color: #00ff00;
+  background: rgba(0, 255, 0, 0.1);
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  align-self: center;
+}
+
+.playerGameOverSection.loser {
+  border-color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  align-self: center;
+}
+
+/* PPT specific: make the lives sector large and borderless */
+.pptLivesContainer {
+  margin: 1rem 0;
+  text-align: center;
+  background: transparent; /* no box */
+  border: none;
+  padding: 0.5rem 0;
+}
+
+.pptLivesLabel {
+  color: #cccccc;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.pptLivesValue {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #ffd700;
+  letter-spacing: 1px;
+}
+
+.pptTieText {
+  margin-top: 0.6rem;
+  color: #cccccc;
+}
+
+/* Separador VS para dual sectores */
+.vsSeparatorLarge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  align-self: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  min-width: 80px;
+  font-family: var(--pixelfont);
+  animation: vsGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes vsGlow {
+  from {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  }
+  to {
+    text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.6);
+  }
+}
+
+/* Headers específicos para cada jugador */
+.playerGameOverSection .gameOverHeader {
+  border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Información de scores para multiplayer */
+.multiplayerScoreInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 2vw;
+  padding: 1rem 2vw;
+  margin: 1rem 0;
+}
+
+.playerScore {
+  text-align: center;
+}
+
+.playerScore .playerName {
+  font-size: 1.1rem;
+  color: #ffd700;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.playerScore .scoreValue {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.scoreVs {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+/* Layout de acciones para cada jugador */
+.playerActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.playerActions .gameOverButton {
+  width: 100%;
+}
+
+
+
+
+@media (max-width: 768px) {
+  .multiplayerGameOverContainer {
+    flex-direction: column;
+    gap: 0rem;
+    align-items: center;
+  }
+  
+  .playerGameOverSection {
+    width: 100%;
+    min-width: auto;
+    padding: 2vw 2vw;
+    border-radius: 4vw !important;
+  }
+  
+  .vsSeparatorLarge {
+    font-size: 1rem;
+    min-width: auto;
+    padding: 1vw;
+  }
+  .playerGameOverSection .gameOverHeader {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .multiplayerScoreInfo {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 2vw !important;
+    margin: 0 !important;
+  }
+  .playerActions{
+    font-size: 1vw !important;
+    gap: 0 !important;
+    margin-top: -1rem !important;
+    padding-top: 0vw !important;
+    height: min-content !important;
+    align-items: baseline;
+    margin-bottom: 0vh !important;
+  }
+}

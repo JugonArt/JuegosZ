@@ -1,0 +1,1 @@
+const fs=require('fs');const p='c:/Users/usuario/Downloads/juegos-z/src/hooks1942/useGameLoop.js';const s=fs.readFileSync(p,'utf8');const lines=s.split('\n');lines.forEach((l,i)=>{if(l.includes('currentEnemies'))console.log(i+1+': '+l)});

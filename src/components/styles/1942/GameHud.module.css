@@ -1,0 +1,661 @@
+/* GameHUD.module.css - Estilos para el HUD del juego 1942 */
+
+/* Clases adicionales para el wrapper del juego */
+.gameWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  overflow: hidden;
+  position: relative; /* Clave para superponer elementos */
+}
+
+/* En móvil, el contenedor del juego debe centrarse absolutamente */
+.gameWrapper.mobile .gameContainer {
+  position: fixed;
+  top: 0%;
+  left: -10%;
+  width: 100vw !important;
+  height: 100vh !important;
+  transform-origin: center center;
+  /* El transform de scale se aplica inline */
+  transform: scale(10);
+}
+
+.gameWrapper.desktop .gameContainer {
+  transform-origin: center top;
+}
+
+.gameContainer {
+  /* Contenedor del área de juego */
+  display: block;
+  overflow: hidden;
+  border-radius: 1vw; 
+}
+
+.legend {
+    position: absolute;
+    bottom: 10px;
+    z-index: 20;
+}
+
+.textWhite {
+  color: #ffffff;
+}
+
+.mt4 {
+  margin-top: 1rem;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.textXs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.opacity70 {
+  opacity: 0.7;
+}
+
+.maxW4xl {
+  max-width: 56rem;
+}
+
+.gameHud {
+  color: white;
+  margin-bottom: 1rem;
+  width: 100%;
+  height: 100%;
+  max-width: 96rem;
+  font-family: 'Courier New', monospace;
+  position: fixed;
+  justify-content: end;
+  align-items: end;
+  bottom: 0.5vw;
+  z-index: 10;
+}
+
+/* Barra principal del HUD */
+.hudMainBar {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
+              0 0 20px rgba(251, 191, 36, 0.3);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.hudMainBar::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(251, 191, 36, 0.1), transparent);
+  animation: shine 3s ease-in-out infinite;
+}
+
+.hudGrid {
+  display: flex;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  flex-direction: row;
+  align-items: end;
+  z-index: 10;
+  width: 100%;
+  position: absolute !important;
+  bottom: 0;
+}
+
+.hudGrid > *{
+  flex: 1;
+}
+
+.hudGrid2players{
+  display: grid;
+}
+
+/* Estadísticas de jugadores */
+.playerStats, .rightStats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  bottom: 0%;
+  flex: 1.5;
+}
+
+.playerCard {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  border: 0px solid;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px black;
+  height: 100%;
+}
+
+.player1Card {
+  border-color: #60a5fa;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(0, 0, 0, 0.6));
+}
+
+.player2Card {
+  border-color: #34d399;
+  background: linear-gradient(-135deg, rgba(239, 68, 68, 0.3), rgba(0, 0, 0, 0.6));
+}
+
+.playerCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.playerLabel {
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  opacity: 0.8;
+}
+
+.player1Card .playerLabel {
+  color: #93c5fd;
+}
+
+.player2Card .playerLabel {
+  color: var(--redki);
+}
+
+.playerScore {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fbbf24;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px #fbbf24;
+  animation: scoreGlow 2s ease-in-out infinite;
+  width: 70%;
+  justify-self: center;
+  gap: 1vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.PlayerIcon{
+  width: 4vw;
+  height: 4vw;
+  border-radius: 10%;
+  margin-top: -0.5vw;
+}
+
+.GokuIcon{
+  background: url(../../../assets/1942/GokuIcon.webp) center / 100% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/GokuIcon.avif');
+  }
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url(../../../assets/1942/GokuIcon.avif);
+  }
+}
+
+.MrPopoIcon{
+  background: url(../../../assets/1942/MrPopo.webp) center / 100% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/MrPopo.avif');
+  }
+}
+
+@keyframes scoreGlow {
+  0%, 100% { 
+    text-shadow: 0 0 10px #fbbf24, 0 0 20px #fbbf24;
+  }
+  50% { 
+    text-shadow: 0 0 15px #fbbf24, 0 0 30px #fbbf24, 0 0 40px #fbbf24;
+    transform: scale(1.02);
+  }
+}
+
+.playerLives {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5vw;
+  margin-top: 0.25rem;
+}
+
+.heart{
+  border-radius: 10vw;
+  width: 3vw;
+  height: 0.5vw;
+}
+
+.heartFull {
+  background: var(--redki);
+  animation: heartBeat 1.5s ease-in-out infinite;
+}
+
+.heartEmpty {
+  opacity: 0.6;
+  background: #6b7280;
+}
+
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Estadísticas centrales */
+.centerStats {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.levelCard {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(0, 0, 0, 0.7));
+  border-top: 2px solid #ef4444;
+  border-radius: 10vw 10vw 0 0;
+  width: 8vw;
+  justify-self: center;
+  align-self: center;
+  padding: 1vw 0 0 0;
+  backdrop-filter: blur(10px);
+}
+
+.levelLabel {
+  font-size: 0.875rem;
+  color: #fca5a5;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.levelNumber {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  animation: levelBounce 2s ease-in-out infinite;
+  text-shadow: 0 0 15px #ef4444;
+}
+
+@keyframes levelBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1) translateY(-2px); }
+}
+
+.enemyCard {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(0, 0, 0, 0.7));
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  backdrop-filter: blur(10px);
+}
+
+.enemyLabel {
+  font-size: 0.75rem;
+  color: #fed7aa;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.enemyCount {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #fed7aa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.enemyDanger {
+  color: #ef4444 !important;
+  animation: enemyAlert 1s ease-in-out infinite;
+}
+
+@keyframes enemyAlert {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.enemyIcon {
+  width: 3vw;
+  height: 3vw;
+  background: url(../../../assets/1942/Pilot1.webp) center / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/Pilot1.avif');
+  }
+}
+
+/* Power-ups card */
+.powerupCard {
+  text-align: center;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  backdrop-filter: blur(10px);
+}
+
+.powerupLabel {
+  font-size: 0.75rem;
+  color: #c4b5fd;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.powerupCount {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #c4b5fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.powerupAvailable {
+  color: #34d399 !important;
+  animation: powerupGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes powerupGlow {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); text-shadow: 0 0 15px #34d399; }
+}
+
+.powerupIcon {
+  font-size: 1rem;
+}
+
+/* Sección de power-ups activos */
+.powerupsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.powerupSection {
+  border-radius: 0.5rem;
+  width: 80%;
+  height: 5vw;
+  margin-bottom: 1vw;
+  padding: 0.75rem;
+}
+
+.player1Powerups {
+  border-color: #60a5fa;
+}
+
+.player2Powerups {
+  border-color: var(--redki);
+  justify-self: end;
+}
+
+.battlefieldStats {
+  border-color: #fbbf24;
+}
+
+.powerupSectionLabel {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.5vw 0;
+}
+
+.player1Powerups .powerupSectionLabel {
+  color: #93c5fd;
+  border-bottom: 2px solid #93c5fd;
+}
+
+.player2Powerups .powerupSectionLabel {
+  color: var(--redki);
+  text-align: right;
+  border-bottom: 2px solid var(--redki);
+}
+
+.powerupList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-around;
+  padding: 1vw;
+  border-radius: 0 0 1vw 1vw;
+  height: 4vw;
+}
+
+.player1Powerups .powerupList{
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(0, 0, 0, 0.6));
+}
+
+.player2Powerups .powerupList{
+  background: linear-gradient(-135deg, rgba(239, 68, 68, 0.3), rgba(0, 0, 0, 0.6));
+}
+
+.powerupItem {
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  animation: powerupPulse 2s ease-in-out infinite;
+  transition: all 0.3s ease;
+  justify-content: center;
+}
+
+.powerupItem:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes powerupPulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; box-shadow: 0 0 10px currentColor; }
+}
+
+.powerupItemIcon {
+  font-size: 0.875rem;
+  display: none;
+}
+
+.powerupItemLabel {
+  font-size: 1vw;
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+  text-shadow: 0 0 4px black;
+    width: 1.5vw;
+    background: rgba(0, 0, 0, 0.418);
+    border-radius: 10vw;
+    transform: scale(0.8);
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+}
+
+.noPowerups {
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* Battlefield stats grid */
+.battlefieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.battlefieldStat {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #d1d5db;
+}
+
+.battlefieldStat span:first-child {
+  font-size: 0.875rem;
+}
+
+/* Power-ups iconos */
+.LeftRight{
+  height: 13vh !important;
+}
+
+.POicon{
+  min-width: 2vw;
+  min-height: 2vw;
+  max-width: 2vw !important;
+  max-height: 2vw !important;
+  padding: 0;
+  border-radius: 10vw;
+  border: none;
+  transform: none;
+  animation: none !important;
+}
+
+.iconAppear{
+    animation: appear 1s forwards !important;
+}
+
+.wingman.POicon{
+  background-size: 150%;
+}
+
+.rightStats{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex: 2;
+  align-items: end;
+}
+
+.rightStats .levelCard{
+  border-radius: 100vw;
+  width: 7vw;
+  height: 7vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vw;
+  justify-content:baseline;
+  align-items: center;
+}
+
+.rightStats .powerupSection{
+  flex: 3;
+  height: 5vw;
+}
+
+.rightStats .enemyLabel{
+  text-align: right;
+}
+
+.rightStats .powerupList{
+  padding: 0.5vw;
+  height: 4vw;
+}
+
+
+.none {
+  /* Clase para elementos vacíos */
+  display: none;
+}
+
+@keyframes appear {
+  0%{
+    transform: scale(0) translateX(1vw);
+  }
+  50%{
+    transform: scale(1.1) translateY(-0.5vw);
+  }
+  100%{
+        transform: scale(1) translateY(0vw);
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes winGlow {
+  from {
+    text-shadow: 
+      0 0 20px #ffd700,
+      0 0 40px #ffd700,
+      0 0 60px #ff8c00;
+  }
+  to {
+    text-shadow: 
+      0 0 30px #82ff63,
+      0 0 60px #4e9e19,
+      0 0 90px #ff0000;
+  }
+}
+
+@keyframes loseGlow {
+  from {
+    text-shadow: 
+      0 0 20px #ff4444,
+      0 0 40px #ff0000,
+      0 0 60px #8b0000;
+  }
+  to {
+    text-shadow: 
+      0 0 30px #ff44ef,
+      0 0 60px #dc52ff,
+      0 0 90px #8b0000;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .hudGrid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .powerupsRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .playerScore {
+    font-size: 1.25rem;
+  }
+  
+  .levelNumber {
+    font-size: 1.5rem;
+  }
+  
+  .battlefieldGrid {
+    grid-template-columns: 1fr;
+  }
+}

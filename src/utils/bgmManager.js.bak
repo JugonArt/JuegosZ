@@ -1,0 +1,523 @@
+// Default available background music tracks (actual files in public/sounds/BackgroundMusic)
+const DEFAULT_BGM_TRACKS = [
+  '/sounds/BackgroundMusic/Angel.mp3',
+  '/sounds/BackgroundMusic/BattleMusic.mp3',
+  '/sounds/BackgroundMusic/Cell.mp3',
+  '/sounds/BackgroundMusic/Cha-La.mp3',
+  '/sounds/BackgroundMusic/Danger.mp3',
+  '/sounds/BackgroundMusic/Fight.mp3',
+  '/sounds/BackgroundMusic/KameSenin.mp3',
+  '/sounds/BackgroundMusic/Lost.mp3',
+  '/sounds/BackgroundMusic/Prologo.mp3',
+  '/sounds/BackgroundMusic/Prologo2.mp3',
+  '/sounds/BackgroundMusic/SonGoku.mp3',
+  '/sounds/BackgroundMusic/SuperSaiyan.mp3',
+  '/sounds/BackgroundMusic/Tenkaichi.mp3'
+];
+
+class BGMManager {
+  constructor() {
+    if (BGMManager.instance) {
+      return BGMManager.instance;
+    }
+    BGMManager.instance = this;
+    
+    this.currentTrack = null;
+    this.currentTrackIndex = -1;
+    this.audio = null;
+    this.isMuted = false;
+    this.isPaused = false;
+    this.volume = 0.5;
+    this.isPlaying = false;
+    this.debugMode = false;
+    // active track list (can be replaced via setPlaylist)
+    this._tracks = DEFAULT_BGM_TRACKS.slice();
+    this._playedTracks = [];
+    
+    // Internal WebAudio state
+    this._internal = {
+      audio: null,
+      context: null,
+      mediaSource: null,
+      mediaBaseGain: null,
+      mediaAttached: false
+    };
+    
+    // Configurar escucha de tecla Tab para debug
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        this.debugMode = !this.debugMode;
+        console.log('[BGM Debug]', this.debugMode ? 'Enabled' : 'Disabled');
+        if (this.debugMode) {
+          this.logState();
+        }
+      }
+    });
+  }
+
+  initialize() {
+    if (!this.audio) {
+      this.audio = new Audio();
+      this.audio.loop = true;
+      
+      // Agregar event listeners para monitorear el estado de reproducción
+      this.audio.addEventListener('play', () => {
+        this.isPlaying = true;
+        this.isPaused = false;
+        if (this.debugMode) console.log('[BGM Debug] Audio play event');
+      });
+      
+      this.audio.addEventListener('pause', () => {
+        // Solo actualizar isPaused si nosotros pausamos explícitamente
+        if (!this.isPlaying) {
+          this.isPaused = false;
+          if (this.debugMode) console.log('[BGM Debug] Audio pause event - stopped');
+        } else {
+          this.isPaused = true;
+          if (this.debugMode) console.log('[BGM Debug] Audio pause event - paused');
+        }
+      });
+      
+      this.audio.addEventListener('ended', () => {
+        if (!this.audio.loop) {
+          this.isPlaying = false;
+          this.isPaused = false;
+        }
+        if (this.debugMode) console.log('[BGM Debug] Audio ended event');
+      });
+      
+      // Initialize WebAudio context and nodes
+      try {
+        if (!this._internal.context) {
+          this._internal.context = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        if (!this._internal.mediaSource && !this._internal.mediaAttached) {
+          this._internal.mediaSource = this._internal.context.createMediaElementSource(this.audio);
+          this._internal.mediaBaseGain = this._internal.context.createGain();
+          this._internal.mediaBaseGain.gain.value = this.isMuted ? 0 : this.volume;
+          
+          this._internal.mediaSource.connect(this._internal.mediaBaseGain);
+          this._internal.mediaBaseGain.connect(this._internal.context.destination);
+          this._internal.mediaAttached = true;
+          
+          if (this.debugMode) {
+            console.log('[BGM Debug] WebAudio graph initialized');
+          }
+        }
+        
+        // Keep audio element volume at 1 since we're using WebAudio gain
+        this.audio.volume = 1.0;
+      } catch (e) {
+        if (this.debugMode) {
+          console.warn('[BGM Debug] WebAudio init failed:', e);
+        }
+        // Fallback to direct volume control
+        this.audio.volume = this.isMuted ? 0 : this.volume;
+      }
+    }
+    
+    return this.audio;
+  }
+
+  getRandomTrack() {
+    const pool = Array.isArray(this._tracks) && this._tracks.length ? this._tracks : DEFAULT_BGM_TRACKS;
+    const availableTracks = pool.filter(track => !this._playedTracks.includes(track));
+    
+    // Si ya se reprodujeron todas las canciones, reiniciar la lista
+    if (availableTracks.length === 0) {
+      this._playedTracks = [];
+      this.currentTrackIndex = -1;
+      return pool[0];
+    }
+    
+    const randomTrack = availableTracks[Math.floor(Math.random() * availableTracks.length)];
+    this._playedTracks.push(randomTrack);
+    this.currentTrackIndex = pool.indexOf(randomTrack);
+    return randomTrack;
+  }
+
+  play(forceNewTrack = false) {
+    // Asegurarnos de que tenemos un elemento de audio inicializado
+    this.initialize();
+
+    if (this.debugMode) {
+      console.log('[BGM Debug] Play called:', {
+        forceNewTrack,
+        currentState: {
+          isPlaying: this.isPlaying,
+          isPaused: this.isPaused,
+          hasSource: !!this.audio.src,
+          currentTrack: this.currentTrack
+        }
+      });
+    }
+
+    // Asegurarnos de que el contexto de audio esté activo
+    if (this._internal.context && this._internal.context.state === 'suspended') {
+      this._internal.context.resume().catch(e => {
+        if (this.debugMode) console.warn('[BGM Debug] Context resume failed:', e);
+      });
+    }
+
+    const startPlayback = () => {
+      if (this.debugMode) console.log('[BGM Debug] Starting playback');
+      
+      this.isPlaying = true;
+      this.isPaused = false;
+
+      // Asegurar el volumen correcto antes de reproducir
+      if (this._internal.mediaAttached && this._internal.mediaBaseGain) {
+        this.audio.volume = 1.0;
+        const now = this._internal.context.currentTime;
+        this._internal.mediaBaseGain.gain.setValueAtTime(0, now);
+        this._internal.mediaBaseGain.gain.linearRampToValueAtTime(
+          this.isMuted ? 0 : this.volume,
+          now + 0.1
+        );
+      } else {
+        this.audio.volume = this.isMuted ? 0 : this.volume;
+      }
+
+      const playPromise = this.audio.play();
+      if (playPromise) {
+        playPromise.catch(error => {
+          if (this.debugMode) {
+            console.warn('[BGM Debug] Initial playback failed, retrying:', error);
+          }
+          // Intentar reproducir nuevamente después de un breve retraso
+          setTimeout(() => {
+            if (this.isPlaying && !this.isPaused) {
+              this.audio.play().catch(e2 => {
+                if (this.debugMode) console.warn('[BGM Debug] Retry failed:', e2);
+              });
+            }
+          }, 100);
+        });
+      }
+    };
+
+    // Decidir si necesitamos una nueva pista o continuar la actual
+    if (!this.isPlaying || forceNewTrack || !this.audio.src) {
+      if (this.audio.src && !forceNewTrack) {
+        // Si ya hay una canción cargada y no se fuerza nueva
+        if (this.isPaused) {
+          return this.resume();
+        }
+        startPlayback();
+      } else {
+        // Necesitamos una nueva pista
+        const track = this.getRandomTrack();
+        if (this.debugMode) console.log('[BGM Debug] Loading new track:', track);
+        
+        this.currentTrack = track;
+        this.audio.src = track;
+        this.audio.currentTime = 0;
+        
+        // Esperar a que la pista esté lista antes de reproducir
+        this.audio.addEventListener('canplaythrough', () => {
+          if (this.debugMode) console.log('[BGM Debug] Track loaded, starting playback');
+          startPlayback();
+        }, { once: true });
+        
+        // También intentar reproducir inmediatamente por si ya está disponible
+        startPlayback();
+      }
+    }
+      this.isPaused = false;
+      
+      const playPromise = this.audio.play();
+      if (playPromise) {
+        playPromise.catch(error => {
+          console.warn('[BGM] Playback error:', error);
+          this.isPlaying = false;
+        });
+      }
+    } else if (this.isPaused) {
+      this.resume();
+    }
+  }
+
+  stop() {
+    if (!this.audio) return;
+    
+    if (this.debugMode) console.log('[BGM Debug] Stopping track:', this.currentTrack);
+    
+    // Realizar un fade out suave
+    if (this._internal.mediaAttached && this._internal.mediaBaseGain) {
+      const now = this._internal.context.currentTime;
+      this._internal.mediaBaseGain.gain.linearRampToValueAtTime(0, now + 0.1);
+    }
+    
+    setTimeout(() => {
+      if (this.audio) {
+        this.audio.pause();
+        this.audio.currentTime = 0;
+        // Restaurar la ganancia después del fade
+        if (this._internal.mediaAttached && this._internal.mediaBaseGain) {
+          this._internal.mediaBaseGain.gain.value = this.isMuted ? 0 : this.volume;
+        }
+      }
+    }, 100);
+    
+    this.isPlaying = false;
+    this.isPaused = false;
+  }
+
+  pause() {
+    if (!this.audio || !this.isPlaying || this.isPaused) return false;
+    
+    if (this.debugMode) console.log('[BGM Debug] Pausing track:', this.currentTrack);
+    
+    // Realizar un fade out más corto
+    if (this._internal.mediaAttached && this._internal.mediaBaseGain) {
+      const now = this._internal.context.currentTime;
+      this._internal.mediaBaseGain.gain.linearRampToValueAtTime(0, now + 0.05);
+    }
+    
+    setTimeout(() => {
+      if (this.audio && this.isPaused) {
+        this.audio.pause();
+      }
+    }, 50);
+    
+    this.isPaused = true;
+    return true;
+  }
+
+  resume() {
+    if (!this.audio || !this.isPaused) return false;
+    
+    if (this.debugMode) console.log('[BGM Debug] Resuming track:', this.currentTrack);
+    
+    // Primero restaurar la ganancia a 0
+    if (this._internal.mediaAttached && this._internal.mediaBaseGain) {
+      this._internal.mediaBaseGain.gain.value = 0;
+    }
+    
+    // Intentar reproducir
+    const playPromise = this.audio.play();
+    if (playPromise) {
+      playPromise.then(() => {
+        // Hacer fade in después de que comience la reproducción
+        if (this._internal.mediaAttached && this._internal.mediaBaseGain) {
+          const now = this._internal.context.currentTime;
+          this._internal.mediaBaseGain.gain.linearRampToValueAtTime(
+            this.isMuted ? 0 : this.volume,
+            now + 0.1
+          );
+        }
+      }).catch(error => {
+        if (this.debugMode) console.warn('[BGM Debug] Resume error:', error);
+        this.isPaused = true;
+      });
+    }
+    
+    this.isPaused = false;
+    return true;
+  }
+
+  nextTrack() {
+    if (!this._tracks.length) return false;
+    
+    const pool = Array.isArray(this._tracks) && this._tracks.length ? this._tracks : DEFAULT_BGM_TRACKS;
+    this.currentTrackIndex = (this.currentTrackIndex + 1) % pool.length;
+    const nextTrack = pool[this.currentTrackIndex];
+    
+    if (nextTrack) {
+      this.currentTrack = nextTrack;
+      this.audio.src = nextTrack;
+      this.audio.currentTime = 0;
+      this.isPlaying = true;
+      this.isPaused = false;
+      
+      const playPromise = this.audio.play();
+      if (playPromise) {
+        playPromise.catch(error => {
+          console.warn('[BGM] Next track error:', error);
+        });
+      }
+      return true;
+    }
+    return false;
+  }
+
+  setVolume(value) {
+    // Clamp to valid range and store
+    const v = Math.max(0, Math.min(1, Number(value) || 0));
+    const prevVolume = this.volume;
+    this.volume = v;
+
+    if (this.debugMode) {
+      console.log('[BGM Debug] setVolume:', {
+        previousVolume: prevVolume,
+        newVolume: v,
+        isMuted: this.isMuted,
+        isPlaying: this.isPlaying,
+        isPaused: this.isPaused,
+        hasAudio: !!this.audio,
+        currentTrack: this.currentTrack,
+        hasWebAudio: !!(this._internal && this._internal.mediaAttached)
+      });
+    }
+
+    if (!this.audio) return;
+
+    try {
+      // Preservar el estado de reproducción actual
+      const wasPlaying = !this.audio.paused;
+      const currentTime = this.audio.currentTime;
+
+      // Si no tenemos WebAudio configurado, intentar inicializarlo
+      if (!this._internal.mediaAttached) {
+        this.initialize();
+      }
+
+      // Usar WebAudio si está disponible
+      if (this._internal.mediaAttached && this._internal.mediaBaseGain) {
+        if (this.debugMode) console.log('[BGM Debug] Using WebAudio volume control');
+        
+        const now = this._internal.context.currentTime;
+        // Transición suave del volumen
+        this._internal.mediaBaseGain.gain.cancelScheduledValues(now);
+        this._internal.mediaBaseGain.gain.setValueAtTime(this._internal.mediaBaseGain.gain.value, now);
+        this._internal.mediaBaseGain.gain.linearRampToValueAtTime(this.isMuted ? 0 : v, now + 0.1);
+        
+        // Mantener volumen del elemento en 1
+        this.audio.volume = 1.0;
+      } else {
+        // Fallback a control directo
+        if (this.debugMode) console.log('[BGM Debug] Using direct audio volume control');
+        this.audio.volume = this.isMuted ? 0 : v;
+      }
+
+      // Si estaba reproduciendo, asegurarnos de que continúe
+      if (wasPlaying && !this.isPaused) {
+        if (this.debugMode) console.log('[BGM Debug] Ensuring playback continues');
+        this.isPlaying = true;
+        
+        // Asegurarnos de que el contexto esté activo
+        if (this._internal.context && this._internal.context.state === 'suspended') {
+          this._internal.context.resume();
+        }
+
+        const playPromise = this.audio.play();
+        if (playPromise) {
+          playPromise.catch(e => {
+            if (this.debugMode) console.warn('[BGM Debug] Playback continuation failed:', e);
+            // Intentar reproducir nuevamente después de un breve retraso
+            setTimeout(() => {
+              if (this.isPlaying && !this.isPaused) {
+                this.audio.currentTime = currentTime;
+                this.audio.play().catch(e2 => {
+                  if (this.debugMode) console.warn('[BGM Debug] Retry playback failed:', e2);
+                });
+              }
+            }, 100);
+          });
+        }
+      }
+    } catch (e) {
+      if (this.debugMode) console.warn('[BGM Debug] Volume update error:', e);
+    }
+  }
+
+  logState() {
+    console.log('[BGM Debug] Current State:', {
+      currentTrack: this.currentTrack,
+      isPlaying: this.isPlaying,
+      isPaused: this.isPaused,
+      isMuted: this.isMuted,
+      volume: this.volume,
+      hasAudio: !!this.audio,
+      audioState: this.audio ? {
+        src: this.audio.src,
+        paused: this.audio.paused,
+        volume: this.audio.volume,
+        currentTime: this.audio.currentTime,
+        duration: this.audio.duration
+      } : null,
+      webAudio: {
+        attached: !!(this._internal && this._internal._mediaAttached),
+        hasBaseGain: !!(this._internal && this._internal._mediaBaseGain),
+        hasMediaSource: !!(this._internal && this._internal._mediaSource)
+      }
+    });
+  }
+
+  toggleMute() {
+    if (this.isMuted) {
+      this.isMuted = false;
+      if (this.audio) {
+        this.audio.volume = this.volume;
+      }
+    } else {
+      this.isMuted = true;
+      if (this.audio) {
+        this.audio.volume = 0;
+      }
+    }
+    console.log('[BGM] Music muted:', this.isMuted);
+    return this.isMuted;
+  }
+
+  getCurrentState() {
+    return {
+      isPlaying: this.isPlaying,
+      isMuted: this.isMuted,
+      isPaused: this.isPaused,
+      currentTrack: this.currentTrack,
+      currentTrackIndex: this.currentTrackIndex,
+      volume: this.volume
+    };
+  }
+
+  // Compatibility helpers for existing code that expects a backgroundMusic-like API
+  init() {
+    // no-op for now (kept for compatibility)
+    this.initialize();
+  }
+
+  playRandom() {
+    return this.play(true);
+  }
+
+  // Allow setting a playlist (array of paths)
+  setPlaylist(list = []) {
+    if (!Array.isArray(list)) return;
+    // normalize paths
+    this._playlist = list.map(p => (p && p.startsWith('/') ? p : `/sounds/BackgroundMusic/${p}`));
+    // replace tracks only if non-empty
+    if (this._playlist.length) {
+      this._tracks = this._playlist.slice();
+    }
+  }
+
+  // Backwards-compatible alias used by some modules
+  updateMasterGain(v = null) {
+    // translate to setVolume
+    if (typeof v === 'number') this.setVolume(v);
+    else this.setVolume(this.volume);
+  }
+}
+
+// Export a singleton instance
+export const bgmManager = new BGMManager();
+
+// Default export for backwards compatibility
+export default bgmManager;
+
+// Create a custom hook for React components
+export const useBGM = () => {
+  return {
+    play: (forceNewTrack) => bgmManager.play(forceNewTrack),
+    stop: () => bgmManager.stop(),
+    pause: () => bgmManager.pause(),
+    resume: () => bgmManager.resume(),
+    nextTrack: () => bgmManager.nextTrack(),
+    toggleMute: () => bgmManager.toggleMute(),
+    setVolume: (value) => bgmManager.setVolume(value),
+    getCurrentState: () => bgmManager.getCurrentState()
+  };
+};

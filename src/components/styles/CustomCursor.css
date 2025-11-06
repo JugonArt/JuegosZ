@@ -1,0 +1,115 @@
+/* CustomCursor.css */
+
+/* Ocultar el cursor nativo en TODA la página */
+* {
+  cursor: none !important;
+}
+
+/* Cursor personalizado */
+.custom-cursor {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  pointer-events: none !important;
+  z-index: 99999;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid transparent;
+  opacity: 1;
+  transition: mix-blend-mode 0.4s ease-in-out, width 0.4s ease-in-out, height 0.4s ease-in-out, background 0.4s ease-in-out, border 0.4s ease-in-out, opacity 0.2s ease-in-out;
+}
+.custom-cursor::after{
+  content: '★';
+  font-size: clamp(1em, 0.2vw, 2vw);
+  color: red;
+  transition: 0.3s ease-in-out;
+}
+/* Estado hover genérico - elementos clickeables */
+.custom-cursor.cursor-pointer {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 2px solid white;
+}
+
+/* Estado grab - elementos arrastrables */
+.cursor-grab {
+  width: 3vw;
+  height: 3vw;
+          animation: pulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+          0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+          }
+          50% {
+            transform: translate(-50%, -50%) scale(1.3);
+          }
+        }/* Estado no-drop - elementos no permitidos */
+.cursor-grab::after{
+  font-size: 2vw;
+}
+.cursor-no-drop {
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 0, 0, 0.3);
+  border: 3px solid red;
+}
+
+/* OPCIONAL: Efecto de estela/trail */
+.custom-cursor::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.3;
+  animation: pulse 1.5s ease-out infinite;
+}
+
+.custom-cursor {
+  background: #fab20e;
+}
+.custom-cursor.cursor-hover.cursor-pointer {
+  background: rgba(250, 179, 14, 0.288);
+  border-color: #fab20e;
+}
+        .custom-cursor.cursor-click {
+          width: 30px;
+          height: 30px;
+          border-color: red;
+  mix-blend-mode:difference;
+  transition: mix-blend-mode 0.1s ease-in-out, width 0.1s ease-in-out, height 0.1s ease-in-out, background 0.1s ease-in-out, border 0.1s ease-in-out;
+        }
+/* OPCIONAL: Cursor con borde sin relleno (descomenta para activar) */
+/*
+.custom-cursor {
+  background: transparent;
+  border: 2px solid white;
+}
+*/
+
+
+.custom-cursor::before {
+  display: none;
+}
+
+.cursor-inactive {
+  opacity: 0 !important;
+  transition: opacity 0.3s ease-out !important;
+}
+
+@media (max-width: 1024px) {
+  .custom-cursor{
+    display: none;
+  }
+}

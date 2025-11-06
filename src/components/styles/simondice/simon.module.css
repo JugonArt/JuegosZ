@@ -1,0 +1,1258 @@
+/* Variables CSS - iguales que Tateti */
+:root {
+  --rojo: #f7665c;
+  --rojofuerte: #ff392b;
+  --acentuarRojo: #fdafa9;
+  --transparente: rgba(0, 0, 0, 0.349);
+  /* Variables para botones */
+  --buttonbackground: rgba(0, 0, 0, 0.5);
+  --buttonborder: rgba(255, 255, 255, 0.3);
+  --text: white;
+  --background: black;
+  --ki: #ffd700;
+}
+
+/* Contenedor principal */
+.simonContainer {
+  background: url('../../../assets/simondice/KamiLookout3.png');
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/KamiLookout3.avif');
+  }
+  background-position: bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Indicadores de juego - movidos a la parte inferior */
+.gameIndicators {
+  display: flex;
+  justify-content: center;
+  gap: 2vw;
+  position: fixed;
+  bottom: 2vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.levelIndicator,
+.roundIndicator {
+  font-family: "Press Start 2P", system-ui;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1vw 2vw;
+  font-size: 1.5vw;
+  font-weight: bold;
+  background: var(--buttonbackground);
+  color: white;
+  border-radius: 3vw;
+  letter-spacing: 1px;
+  border: 2px solid var(--buttonborder);
+  z-index: 10;
+  backdrop-filter: blur(6px);
+  flex-direction: row;
+  white-space: nowrap;
+  min-width: 50%;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.levelIndicator:hover,
+.roundIndicator:hover {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.levelIndicator h4,
+.roundIndicator h4 {
+  margin: 0;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.levelIndicator span,
+.roundIndicator span {
+  font-weight: bold;
+  font-size: 1em;
+  color: #00ff00;
+  position: absolute;
+}
+
+/* Números de nivel y ronda con animación */
+.levelNumber,
+.roundNumber {
+  display: inline-block;
+  font-size: inherit;
+  text-shadow: none;
+  transition: 0.4s ease-in-out;
+  color: #00ff00;
+  font-weight: bold;
+}
+
+/* Animación para cuando se incrementa nivel/ronda */
+.levelIncrement,
+.roundIncrement {
+  display: inline-block;
+  animation: levelRoundIncrementAnim 1s ease-out forwards;
+  text-shadow: -2px 0 black, 2px 0 black, 0 2px black, 0 -2px black !important;
+}
+
+@keyframes levelRoundIncrementAnim {
+  0% { 
+    color: #00ff00;
+    font-size: inherit;
+    transform: scale(1);
+  }
+  25% { 
+    color: #00ff88;
+    font-size: 2vw;
+    transform: scale(1.3);
+    text-shadow: -3px 0 black, 3px 0 black, 0 3px black, 0 -3px black !important;
+  }
+  50% {
+    color: #88ff88;
+    font-size: 2.2vw;
+    transform: scale(1.4);
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+  }
+  75% {
+    color: #00ff00;
+    font-size: 1.8vw;
+    transform: scale(1.1);
+    text-shadow: -2px 0 black, 2px 0 black, 0 2px black, 0 -2px black !important;
+  }
+  100% { 
+    color: #00ff00;
+    font-size: inherit;
+    transform: scale(1);
+    text-shadow: none;
+  }
+}
+
+/* Contenedor del juego */
+.gameContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.simon {
+  width: 100%;
+  height: 106vh;
+  position: absolute;
+  backdrop-filter: blur(5px) brightness(0.8); 
+  transition: 0.4s ease-in-out;
+}
+
+/* Contenedor de esferas */
+.spheresContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  gap: 0;
+  justify-items: center;
+  align-items: center;
+  width: min-content;
+  margin: 0 auto;
+  transform: translateY(7vw) rotate(90deg);
+  filter: drop-shadow(0 0 25px black);
+  animation: appearfrombottom 2s forwards;
+}
+@keyframes appearfrombottom {
+  0% {transform: translateY(140%) rotate(90deg) scale(0.7);}
+  50% {transform: translateY(4vw) rotate(90deg);}
+  75% {transform: translateY(9vw) rotate(90deg) scale(1);}
+  100% {transform: translateY(7vw) rotate(90deg) scale(1);}
+}
+.spheresContainer.disableHover .sphere {
+  cursor: default !important;
+  filter: brightness(0.5);
+}
+
+.spheresContainer.disableHover .sphere:hover {
+  cursor: default !important;
+}
+
+/* Animaciones de transición */
+/* Animaciones de transición de esferas eliminadas - reemplazadas por video */
+
+/* Esferas individuales */
+.sphere {
+  width: 10vw;
+  height: 10vw;
+  cursor: pointer;
+  filter: drop-shadow(0) brightness(0);
+  transition: 0.1s ease-in-out !important;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  box-shadow: none !important;
+  border: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+.sphere:active {
+  filter: brightness(80%);
+  transition: none;
+}
+
+.sphere:focus,
+.sphere:focus-visible,
+.sphere:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.sphere::-moz-focus-inner {
+  border: 0 !important;
+}
+
+.sphere.disabled {
+  cursor: default;
+  filter: brightness(0.5);
+}
+
+/* CSS Variables para velocidad dinámica - controladas desde JavaScript */
+:root {
+  --simon-illumination-duration: 1400ms; /* Valor base para progresión hacia 200ms */
+  --simon-interval-duration: 300ms;      /* Valor base SÚPER CORTO para intervalos */
+}
+
+/* Clases dinámicas por nivel */
+.simonContainer.secondlevel {
+  --level-bg-color: linear-gradient(135deg, #1a1a2e, #16213e);
+  --level-accent-color: #e94560;
+  background: url(../../../assets/simondice/Planet-Namek.png);
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/Planet-Namek.avif');
+  }
+  transition: background 2s ease-in-out;
+}
+
+.simonContainer.secondlevel .sphere {
+  box-shadow: 0 0 15px rgba(233, 69, 96, 0.3);
+}
+
+.simonContainer.thirdlevel {
+  --level-bg-color: linear-gradient(135deg, #0f0f23, #1a0033);
+  --level-accent-color: #ff6b6b;
+  background: url(../../../assets/simondice/Space.png);
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/Space.avif');
+  }
+  transition: background 2s ease-in-out;
+}
+/* Iluminación de esferas con duración dinámica */
+.sphere.illuminate {
+  animation: ilumina var(--simon-illumination-duration) forwards;
+}
+
+.sphere.illuminate:hover {
+  filter: drop-shadow(0 0 10px rgb(255, 223, 118)) brightness(150%);
+}
+
+@keyframes ilumina {
+  0% { filter: auto; }
+  50% { filter: drop-shadow(0 0 10px rgb(255, 223, 118)) brightness(150%); }
+  100% { filter: auto; }
+}
+/* Posicionamiento específico de esferas */
+.sphere:nth-child(1) {
+  grid-column: 2;
+  grid-row: 1;
+  background: url('../../../assets/simondice/esfera5.webp') center / cover no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/esfera5.avif');
+  }
+  transform: translateY(5vw) rotate(-90deg);
+}
+
+.sphere:nth-child(2) {
+  grid-column: 1;
+  grid-row: 2;
+  background: url('../../../assets/simondice/esfera7.webp') center / cover no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/esfera7.avif');
+  }
+  transform: rotate(-90deg);
+}
+
+.sphere:nth-child(3) {
+  grid-column: 3;
+  grid-row: 2;
+  background: url('../../../assets/simondice/esfera1.webp') center / cover no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/esfera1.avif');
+  }
+  transform: rotate(-90deg);
+}
+
+.sphere:nth-child(4) {
+  grid-column: 1;
+  grid-row: 3;
+  background: url('../../../assets/simondice/esfera6.webp') center / cover no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/esfera6.avif');
+  }
+  transform: rotate(-90deg);
+}
+
+.sphere:nth-child(5) {
+  grid-column: 2;
+  grid-row: 3;
+  background: url('../../../assets/simondice/esfera4.webp') center / cover no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/esfera4.avif');
+  }
+  transform: translateY(-5vw) rotate(-90deg);
+}
+
+.sphere:nth-child(6) {
+  grid-column: 3;
+  grid-row: 3;
+  background: url('../../../assets/simondice/esfera3.webp') center / cover no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/esfera3.avif');
+  }
+  transform: rotate(-90deg);
+}
+
+.sphere:nth-child(7) {
+  grid-column: 2;
+  grid-row: 4;
+  background: url('../../../assets/simondice/esfera2.webp') center / cover no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/simondice/esfera2.avif');
+  }
+  transform: translateY(-5vw) rotate(-90deg);
+}
+
+.sphere:hover {
+  filter: drop-shadow(0 0 10px rgb(255, 223, 118)) brightness(120%);
+}
+.sphere:active{
+  filter: brightness(80%);
+  transition: none;
+}
+
+.sphere:nth-child(1):hover {
+  transform: translateY(5vw) rotate(-90deg) scale(1) !important;
+}
+.sphere:nth-child(7):hover {
+  transform: translateY(-5vw) rotate(-90deg) scale(1) !important;
+}
+@keyframes spherestranslatefloat {
+  0% {transform: translateY(-5vw) translateX(0vw) rotate(-90deg);}
+  50% {transform: translateY(-5vw) translateX(-1vw) rotate(-90deg);}
+  100% {transform: translateY(-5vw) translateX(0vw) rotate(-90deg);}
+}
+@keyframes spherestranslatefloat2 {
+  0% {transform: translateY(5vw) translateX(0vw) rotate(-90deg);}
+  50% {transform: translateY(5vw) translateX(-1vw) rotate(-90deg);}
+  100% {transform: translateY(5vw) translateX(0vw) rotate(-90deg);}
+}
+@keyframes spheresfloat {
+  0% {transform: translateX(0vw) rotate(-90deg);}
+  50% {transform: translateX(-1vw) rotate(-90deg);}
+  100% {transform: translateX(0vw) rotate(-90deg);}
+}
+/* Tabla de puntajes */
+.scoresTable {
+  display: none;
+  max-width: 40%;
+  margin: 20px auto;
+  background: rgba(0, 0, 0, 0.349);
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+  position: absolute !important;
+  left: 5vw;
+  top: 20%;
+  z-index: 40;
+}
+
+.scoresTable.normalScores {
+  display: block;
+  animation: aparecerPuntaje 0.5s ease-in-out;
+}
+
+.scoresTable.gameOverScores {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-width: 100vw;
+  padding: 0 20vw 0 20vw;
+  position: absolute;
+  top: 9vw;
+  left: 0;
+  display: block;
+  background: transparent;
+}
+
+.scoresTable h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.8em;
+}
+
+.scoresTableContent {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.scoresTableContent th {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.scoresTableContent td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.noScores {
+  text-align: center;
+}
+
+.scoresButtons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.closeScoresButton,
+.clearScoresButton {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  border: 2px solid white !important;
+  background: transparent;
+  color: white;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.closeScoresButton:hover,
+.clearScoresButton:hover {
+  background-color: #2c2c2c94;
+  transform: scale(1.1);
+}
+
+@keyframes aparecerPuntaje {
+  0% {
+    opacity: 0;
+    transform: translateX(5vw);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Panel de administrador */
+.adminContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 120;
+}
+
+.adminPanel {
+  max-width: 500px;
+  margin: 10px auto;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  text-align: center;
+}
+
+.adminPanel h3 {
+  color: #FFD700;
+  margin-top: 0;
+  font-size: 1.8em;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Pantalla de nivel completado */
+.levelCompletedScreen {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  z-index: 9000;
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.342);
+}
+
+.levelCompletedContent {
+  text-align: center;
+  animation: levelCompletedPulse 0.4s ease-in-out infinite;
+}
+
+.levelCompletedContent h1 {
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: var(--text);
+  text-shadow: -8px 0 0px black, 0 8px 0px black, 8px 0 0px black, 0 -8px 0px black;
+  font-family: "Press Start 2P", system-ui;
+}
+.transitionText {
+  font-size: 2em;
+  margin: 2vw 0;
+  text-shadow: -4px 0 0px black, 0 4px 0px black, 4px 0 0px black, 0 -4px 0px black;
+  font-family: "Press Start 2P", system-ui;
+  animation: fadeInOut 1s ease-in-out infinite,
+  levelCompletedPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes levelCompletedPulse {
+  0%, 100% { transform: scale(1);}
+  50% { transform: scale(1.05);}
+}
+
+@keyframes fadeInOut {
+  0%, 100% {   text-shadow: -4px 0 0px black, 0 4px 0px black, 4px 0 0px black, 0 -4px 0px black; color: white}
+  50% {   text-shadow: -4px 0 0px white, 0 4px 0px white, 4px 0 0px white, 0 -4px 0px white; color: black;}
+}
+
+.adminInputGroup {
+  margin-bottom: 15px;
+}
+
+.adminInputGroup label {
+  color: white;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.adminInput {
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  max-width: 250px;
+  text-align: center;
+  background-color: rgba(51, 51, 51, 0.8);
+  color: white;
+  border: 2px solid #FFD700;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: all 0.3s ease;
+}
+
+.adminInput:focus {
+  outline: none;
+  border-color: #FF6B35;
+  box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+}
+
+.adminSelect {
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  max-width: 250px;
+  background-color: rgba(51, 51, 51, 0.8);
+  color: white;
+  border: 2px solid #FFD700;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.adminSelect:focus {
+  outline: none;
+  border-color: #FF6B35;
+  box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+}
+
+.adminLevelConfig {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.adminInfo {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 0;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.adminInfo p {
+  margin: 5px 0;
+  color: #E0E0E0;
+  font-size: 0.95em;
+}
+
+.adminInfo strong {
+  color: #FFD700;
+}
+
+.adminButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.adminStartButton {
+  background-color: #FF5722;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.adminStartButton:hover {
+  background-color: #FF7043;
+}
+
+.adminTestButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.adminTestWin,
+.adminTestLose {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.adminTestWin {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.adminTestWin:hover {
+  background-color: #45a049;
+}
+
+.adminTestLose {
+  background-color: #f44336;
+  color: white;
+}
+
+.adminTestLose:hover {
+  background-color: #da190b;
+}
+
+/* Botones de victoria por nivel */
+.adminVictoryButtons {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adminVictoryLevel1,
+.adminVictoryLevel2,
+.adminVictoryLevel3 {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.adminVictoryLevel1 {
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  color: white;
+  border-color: #FF8C00;
+}
+
+.adminVictoryLevel1:hover {
+  background: linear-gradient(135deg, #FF8C00, #FFB347);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+}
+
+.adminVictoryLevel2 {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-color: #667eea;
+}
+
+.adminVictoryLevel2:hover {
+  background: linear-gradient(135deg, #764ba2, #667eea);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.adminVictoryLevel3 {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #333;
+  border-color: #FFD700;
+  font-weight: 900;
+}
+
+.adminVictoryLevel3:hover {
+  background: linear-gradient(135deg, #FFA500, #FF8C00);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 215, 0, 0.4);
+}
+
+.adminUtilityButtons {
+  margin-top: 10px;
+}
+
+.adminCloseButton {
+  background-color: #666;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s;
+}
+
+.adminCloseButton:hover {
+  background-color: #555;
+}
+
+/* Pantallas de Game Over y Victoria */
+.gameOverScreen,
+.victoryScreen {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  z-index: 50;
+}
+
+.gameOverContent,
+.victoryContent {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.349);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.gameOverContent h1,
+.victoryContent h1 {
+  font-weight: 500;
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.finalScore {
+  font-size: 2em;
+  margin: 20px 0;
+  color: #FFD700;
+}
+
+.levelReached {
+  font-size: 1.3em;
+  margin: 10px 0;
+  color: #FFA500;
+}
+
+.patternsReached {
+  font-size: 1.1em;
+  margin: 10px 0;
+  color: #87CEEB;
+}
+
+.masterScore {
+  font-size: 2.5em;
+  margin: 20px 0;
+  color: #FFD700;
+  text-shadow: 0 0 10px gold;
+}
+
+.masterPatterns {
+  font-size: 1.4em;
+  margin: 15px 0;
+  color: #87CEEB;
+  text-shadow: 0 0 5px #87CEEB;
+}
+
+.masterTitle {
+  font-size: 1.5em;
+  margin: 15px 0;
+  color: #FF6B35;
+  text-shadow: 0 0 5px #FF6B35;
+}
+
+.gameOverButtons {
+  display: flex;
+  gap: 3vw;
+  justify-content: center;
+}
+
+.retryButton,
+.backHomeButton,
+.playAgainButton {
+  padding: 1vw 3vw 1vw 3vw;
+  border-radius: 20px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 0 20px black;
+  z-index:50 !important;
+}
+
+.retryButton {
+  background: var(--rojo);
+  border: 1px solid var(--acentuarRojo);
+  color: white;
+}
+
+.retryButton:hover {
+  transform: scale(1.1);
+  background: var(--rojofuerte);
+}
+
+.backHomeButton,
+.playAgainButton {
+  background: #ffeb94 !important;
+  border: 1px solid #fff8ba;
+  color: black !important;
+}
+
+.backHomeButton:hover,
+.playAgainButton:hover {
+  transform: scale(1.1);
+  background: #fff8ba !important;
+}
+
+/* Mensaje de victoria animado */
+.victoryContent {
+  position: fixed;
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  animation: wintext 1s forwards;
+  animation-delay: 2s;
+  width: max-content;
+}
+
+@keyframes wintext {
+  0% { transform: translate(-50%, 100%); }
+  50% { transform: translate(-50%, -60%); }
+  100% { transform: translate(-50%, -50%); }
+}
+
+/* Responsive */
+@media (max-width: 425px) {
+  .simonContainer {
+    background-size: cover;
+  }
+  
+  .backButton {
+    width: 18vw;
+    height: 18vw;
+  }
+
+  .gameIndicators {
+    flex-direction: column;
+    gap: 1vh;
+    align-items: center;
+  }
+
+  .levelIndicator,
+  .roundIndicator {
+    min-width: 60vw;
+    padding: 2vw;
+    font-size: 0.9em;
+  }
+
+  .levelCompletedContent {
+    padding: 20px;
+    margin: 0 10px;
+  }
+
+  .levelCompletedContent h1 {
+    font-size: 2em;
+  }
+
+  .levelName {
+    font-size: 1.4em;
+  }
+
+  .transitionText {
+    font-size: 1em;
+  }
+
+  .adminLevelConfig {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .adminInput,
+  .adminSelect {
+    max-width: 100%;
+  }
+  
+  .transitionCloud {
+    top: -60vw;
+    left: -40vw;
+    width: 700vw;
+  }
+  
+  @keyframes nubehide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-700vw); }
+  }
+  
+  @keyframes nubeshow {
+    0% { transform: translateX(-700vw); }
+    100% { transform: translateX(-200vw); }
+  }
+  
+  .gameForm {
+    width: 90vw;
+    height: 90vh;
+  }
+  
+  .formLabel {
+    margin-top: 35vh;
+  }
+  
+  .formControl {
+    max-width: 80%;
+    justify-self: center;
+    align-self: center;
+  }
+  
+  .startButton,
+  .scoresButton {
+    border-radius: 10px !important;
+    padding: 4vw auto !important;
+    min-width: 30vw;
+    min-height: 5vh;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.493);
+  }
+  
+  .buttonContainer {
+    gap: 4vw;
+  }
+  
+  .spheresContainer {
+    width: 100%;
+    left: 0 !important;
+    position: relative;
+  }
+  
+  .sphere {
+    width: 30vw;
+    height: 30vw;
+  }
+  
+  .sphere:nth-child(1) {
+    transform: translateY(15vw);
+  }
+  
+  .sphere:nth-child(5),
+  .sphere:nth-child(7) {
+    transform: translateY(-15vw);
+  }
+  
+  .levelIndicator {
+    padding: 3vw;
+  }
+  
+  .gameOverScreen {
+    height: 60vh;
+    top: 20vh;
+  }
+  
+  .gameOverContent h1 {
+    font-size: 2em;
+  }
+  
+  .finalScore {
+    font-size: 1.5em;
+  }
+  
+  .scoresTable.gameOverScores {
+    top: 30vh;
+  }
+  
+  .gameOverButtons {
+    gap: 10vw;
+    width: 100vw;
+    justify-content: space-evenly;
+  }
+  
+  .retryButton,
+  .backHomeButton {
+    min-width: 30vw !important;
+    max-height: 5.5vh;
+    text-align: center;
+    justify-content: center;
+    padding: 2vw;
+  }
+  @keyframes esferasbajan {
+    0% { transform: auto; }
+    100% { transform: translate(0, 36vh) scale(0.1); }
+  }
+}
+
+/* Pantalla "¿Listo?" */
+.readyScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.637);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.readyContent {
+  text-align: center;
+  color: white;
+  animation: slideUp 0.8s ease-out;
+}
+
+.readyTitle {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 2vw;
+  color: #FFA500;
+  animation: pulse 0.5s infinite;
+  text-shadow: -8px 0 0px black, 0 8px 0px black, 8px 0 0px black, 0 -8px 0px black;
+  font-family: "Press Start 2P", system-ui;
+}
+
+.readyLevel {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  font-family: "Press Start 2P", system-ui;
+  letter-spacing: 2px;
+  color: #90EE90;
+  font-weight: 600;
+}
+
+.readySubtext {
+  font-size: 1.6rem;
+  color: var(--text);
+  margin-bottom: 2rem;
+  font-style: italic;
+  animation: fadeInAndOut 1s ease-in-out infinite;
+}
+
+.readyIndicator {
+  font-size: 3rem;
+  animation: bounce 1.5s infinite;
+  color: #FFA500;
+}
+@keyframes fadeInAndOut {
+  0%, 100% { opacity: 0.3
+    ; }
+  50% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* Transición con video */
+.videoTransitionContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  overflow: hidden;
+}
+
+.blackScreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  z-index: 2001;
+}
+
+.blackScreen.visible {
+  opacity: 1;
+}
+
+.blackScreen.fadeOut {
+  opacity: 1;
+  animation: fadeOutBlackScreen 0.8s ease-in-out forwards;
+}
+
+@keyframes fadeOutBlackScreen {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.videoContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  /* Sin transición - cambio instantáneo */
+  z-index: 2002;
+}
+
+.videoContainer.visible {
+  opacity: 1;
+}
+
+.transitionVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+/* Estilos de texto eliminados - transición simplificada */
+.sphere.flotar1 {
+  animation: spherestranslatefloat2 3s ease-in-out infinite;
+}
+.sphere.flotar2 {
+  animation: spheresfloat 3s ease-in-out infinite;
+  animation-delay: 0.9s;
+}
+.sphere.flotar3 {
+  animation: spheresfloat 3s ease-in-out infinite;
+  animation-delay: 0.7s;
+}
+.sphere.flotar4 {
+  animation: spheresfloat 3s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+.sphere.flotar5 {
+  animation: spherestranslatefloat 3s ease-in-out infinite;
+  animation-delay: 0.4s;
+}
+.sphere.flotar6 {
+  animation: spheresfloat 3s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+.sphere.flotar7 {
+  animation: spherestranslatefloat 3s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+.sphere.flotar1-stop {
+  animation: spherestranslatefloat2 3s ease-in-out forwards;
+}
+.sphere.flotar2-stop {
+  animation: spheresfloat 3s ease-in-out forwards;
+  animation-delay: 0.9s;
+}
+.sphere.flotar3-stop {
+  animation: spheresfloat 3s ease-in-out forwards;
+  animation-delay: 0.7s;
+}
+.sphere.flotar4-stop {
+  animation: spheresfloat 3s ease-in-out forwards;
+  animation-delay: 0.8s;
+}
+.sphere.flotar5-stop {
+  animation: spherestranslatefloat 3s ease-in-out forwards;
+  animation-delay: 0.4s;
+}
+.sphere.flotar6-stop {
+  animation: spheresfloat 3s ease-in-out forwards;
+  animation-delay: 0.3s;
+}
+.sphere.flotar7-stop {
+  animation: spherestranslatefloat 3s ease-in-out forwards;
+  animation-delay: 0.2s;
+}
+/* RESPONSIVE */
+/* RESPONSIVE */
+/* RESPONSIVE */
+/* RESPONSIVE */
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  @keyframes fadeInOut {
+  0%, 100% {   text-shadow: -1px 0 0px black, 0 1px 0px black, 1px 0 0px black, 0 -1px 0px black !important; color: white !important}
+  50% {   text-shadow: -1px 0 0px white, 0 1px 0px white, 1px 0 0px white, 0 -1px 0px white !important; color: black !important;}
+}
+}

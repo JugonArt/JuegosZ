@@ -1,0 +1,582 @@
+/* Pause menu */
+.pauseMenu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--buttonbackground);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+  font-family: "Courier New", monospace;
+  z-index: 999;
+}
+
+.menupause {
+position: absolute;
+left: 0;
+top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  opacity: 1;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 3vw;
+}
+.background{
+position: absolute;
+  width: 100vw;
+  height: 200vh;
+right: -40%;
+bottom: -10%;
+  border: 2vw solid #332003;
+  background: transparent;
+  animation: entradafondo 1s forwards;
+  box-shadow: 5vw 20vw 0 transparent;
+  border-radius: 50%;
+z-index: -1;
+}
+.NimbusTitle{
+    background: url(../../assets/NimbusDesign.webp) top / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/NimbusDesign.avif');
+  }
+    filter: drop-shadow(1vw 1vw 0 #332003);
+    position: absolute;
+    top: -1vw;
+    left: -1vw;
+    width: 41vw;
+    height: 61vh;
+    animation: entradanube 1s forwards, nube 7s 1s infinite;
+}
+.Title{
+	border-top: 2vw solid transparent;
+	border-left: 35vw solid #020001;
+	border-bottom: 2vw solid transparent;
+    height: 0vw;
+    width: 0vw !important;
+    left: -1vw;
+    top: 2vw;
+    position: absolute;
+    rotate: -7deg;
+    z-index: 10;
+    perspective: 200px;
+}
+.Title h2{
+    font-size: 4vw;
+    position: absolute;
+    left: -22vw;
+    top: -2vw;
+    font-family: 'Bowlby One SC', sans-serif;
+    font-weight: bolder;
+    line-height: 1;
+    text-transform: uppercase;
+    margin: 0;
+    color: #ffbf36;
+    letter-spacing: 3px;
+    transition: all 0.3s ease;
+   /* navegadores webkit */
+    text-shadow: 
+        -2px 2px 0px #020001,
+        -4px 4px 0px #020001,
+        -6px 6px 0px #020001,
+        -8px 8px 0px #020001,
+        -10px 10px 0px #020001,
+    -3px -3px 0 black,  /* Top-left shadow */
+     3px -3px 0 black,  /* Top-right shadow */
+    -3px  3px 0 black,  /* Bottom-left shadow */
+     3px  3px 0 black; /* Bottom-right shadow */
+    
+    transform: translateX(3px) translateY(-3px) rotateY(20deg);
+    cursor: default;
+}
+
+.Title h2 span {
+  display: inline-block; /* necesario para que funcione transform */
+  -webkit-text-stroke: 3px #ffffffce;
+}
+
+/* Primera letra distinta */
+.Title h2 span:first-child {
+    color: #fc7d28;
+}
+
+/* Rotaciones locas */
+.Title h2 span:nth-child(1) { animation: title 1s infinite; animation-delay: 0.3s;}
+.Title h2 span:nth-child(2) { animation: title 1s infinite; animation-delay: 0.6s;}
+.Title h2 span:nth-child(3) { animation: title 1s infinite; animation-delay: 0.1s;}
+.Title h2 span:nth-child(4) { animation: title 1s infinite; animation-delay: 0.2s;}
+.Title h2 span:nth-child(5) { animation: title 1s infinite; animation-delay: 0.4s;}
+
+.Goku{
+    background: url(../../assets/GokuPausa.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/GokuPausa.avif');
+  }
+    width: 70vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: -6vw;
+    filter: drop-shadow(2vw 0vw 0 #af3b12);
+    animation: entradaGoku 1s forwards;
+}
+.buttons{
+    z-index: 20;
+    margin-left: 43vw;
+    top: 7vw;
+    position: absolute;
+    animation: buttonsappear 0.3s forwards;
+}
+
+/* Estilo específico para Simon Dice */
+.buttonsSimon {
+    margin-left: 38vw !important;
+}
+
+.buttons button:nth-child(1){
+    animation: buttonappear 0.3s forwards;
+    animation-delay: 0.5s;
+    transform: translate(0%, -1000%)
+}
+.buttons button:nth-child(2){
+    margin-left: 2vw;
+    animation: buttonappear 0.3s forwards;
+    animation-delay: 0.4s;
+    transform: translate(0%, -1000%)
+}
+.buttons button:nth-child(3){
+    margin-left: 3vw;
+    animation: buttonappear 0.3s forwards;
+    animation-delay: 0.3s;
+    transform: translate(0%, -1000%)
+}
+.buttons button:nth-child(4){
+    margin-left: 4vw;
+    animation: buttonappear 0.3s forwards;
+    animation-delay: 0.2s;
+    transform: translate(0%, -1000%)
+}
+.buttons button:nth-child(5){
+    margin-left: 8vw;
+    animation: buttonappear 0.3s forwards;
+    animation-delay: 0.1s;
+    transform: translate(0%, -1000%)
+}
+.buttons button:nth-child(6){
+    margin-left: 13vw;
+    animation: buttonappear 0.3s forwards;
+    animation-delay: 0.1s;
+    transform: translate(0%, -1000%)
+}
+.menuButton {
+  width: 50vw;
+  letter-spacing: -0.4vw;
+  border: 1px solid transparent;
+  border-radius: 10vw;
+  background: none;
+  color: #edeadc;
+  margin: 1vw;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  font-size: 4vw;
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  text-align: left;
+  margin-top: 0.5rem;
+  margin-bottom: -2vw;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-weight: 900;
+  -webkit-text-stroke: 0.2vw #232615;
+    perspective: 200px;
+}
+.menuButton span{
+    font-size: 5vw;
+    color: #dfc033;
+    -webkit-text-stroke: 0.3vw #232615;
+    margin-right: -0.5vw;
+  transition: 0.2s ease-in-out;
+}
+.menuButton:hover,
+.menuButton.hover {
+   font-size: 4.5vw;
+   transform: scale(1);
+    color: #4f410a;
+    -webkit-text-stroke: 0.3vw #edeb78;
+}
+.menuButton:hover span,
+.menuButton.hover span {
+   font-size: 5vw;
+   transform: scale(1.1);
+    color: #4f410a !important;
+    -webkit-text-stroke: 0.3vw #edeb78;
+}
+.menuButton:hover .backgroundText,
+.menuButton.hover .backgroundText {
+    opacity: 1;
+}
+.backgroundText{
+    border-top: 2vw solid transparent;
+	border-left: 50vw solid #faeb3f;
+	border-bottom: 2vw solid transparent;
+    height: 0vw;
+    width: 0vw !important;
+    left: -1vw;
+    top: 2vw;
+    position: absolute;
+    transform: rotateX(20deg);
+    opacity: 0;
+    z-index: -1;
+  transition: 0.2s ease-in-out;
+}
+
+.backmenubtn:hover{
+  transform: translateX(-1vw);
+  filter: drop-shadow(0 0 5px #fff67a);
+}
+.menuButton input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: none;
+  width: 15vw;
+  height: 0.5vw;
+  border-radius: 10vw;
+  background: #edeadc;
+  outline: 0.5vw solid #232615;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
+  margin-left: 1vw;
+  justify-content: center;
+  align-items: center;
+}
+
+.menuButton:hover input[type="range"],
+.menuButton.hover input[type="range"] {
+        transform: scale(1.1);
+        margin-left: 2vw;
+        background: #4f410a;
+        outline-color:  #edeb78;
+}
+.menuButton:hover input[type="range"]::-webkit-slider-thumb,
+.menuButton.hover input[type="range"]::-webkit-slider-thumb {
+        transform: scale(1.1);
+        background: #4f410a;
+        border-color:  #edeb78;
+}
+.menuButton input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2vw;
+  height: 2vw;
+  border: 0.5vw solid #232615;
+  border-radius: 50%;
+  background:#dfc033;
+  position: relative;
+  z-index: 10;
+  transition: 0.2s ease-in-out;
+}
+
+.musicControls {
+  display: flex;
+  gap: 1vw;
+  margin-left: 1vw;
+  align-items: center;
+}
+
+.musicToggle, .musicNext {
+  cursor: pointer;
+  font-size: 2.5vw;
+  padding: 0.5vw;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  color: #dfc033;
+  background: transparent;
+  border: none;
+}
+
+.musicToggle:hover, .musicNext:hover {
+  transform: scale(1.2);
+  color: #4f410a;
+  -webkit-text-stroke: 0.1vw #edeb78;
+}
+
+.musicControls i {
+  transition: all 0.2s ease-in-out;
+}
+
+.MusicIcon{
+    margin-left: 1vw;
+}
+.opacidad{
+    opacity: 0.3;
+    color: white !important;
+}
+/* Animations */
+@keyframes entradafondo {
+    0% {  box-shadow: -0vw 0vw 0 #fd6d0d;}
+    100% {  box-shadow: -60vw 20vw 0 #fd6d0d;}
+}
+@keyframes entradaGoku {
+    0% {  transform: translate(60%, 60%) scale(0.7);filter: brightness(0) drop-shadow(0vw 0vw 0 #af3c12d7)}
+    50% {  transform: translate(-5%, -5%) scale(1.1); filter: brightness(2) drop-shadow(6vw 0vw 0 #3d1709)}
+    100% {  transform: translate(0, 0) scale(1);filter: brightness(1) drop-shadow(2vw 0vw 0 #af3c12d7)}
+}
+@keyframes entradanube {
+    0% {  transform: translate(-60%, -60%) scale(0.7)}
+    50% {  transform: translate(5%, 5%) scale(1.1);}
+    100% {  transform: translate(0, 0) scale(1);}
+}
+@keyframes nube{
+    0%, 100% {  transform: translate(0, 0)}
+    50% {  transform: translate(-5%, -2%)}
+}
+@keyframes title {
+    0%, 100% {  transform: rotate(-10deg)}
+    50% {  transform: rotate(0)}
+}
+@keyframes buttonsappear{
+    0% {  transform: translate(0%, -100%)}
+    100% {  transform: translate(0, 0)}
+}
+@keyframes buttonappear{
+    0% {  transform: translate(0%, -1000%)}
+    100% {  transform: translate(0, 0)}
+}
+.background.salida {
+    animation: salidafondo 0.6s forwards !important;
+}
+
+.Goku.salida {
+    animation: salidaGoku 0.5s forwards !important;
+}
+
+.NimbusTitle.salida {
+    animation: salidanube 0.5s forwards !important;
+}
+
+.menupause.salida {
+    animation: fadeOut 0.3s forwards !important;
+}
+.buttons.salida{
+    animation: buttonsdisappear 0.3s forwards;
+}
+/* Keyframes para animaciones de salida */
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0;}
+}
+
+@keyframes salidafondo {
+    0% { 
+        box-shadow: -60vw 20vw 0 #fd6d0d;
+        transform: scale(1);
+    }
+    100% { 
+        box-shadow: 0vw 0vw 0 #fd6d0d;
+        transform: scale(0.8);
+    }
+}
+
+@keyframes salidaGoku {
+    0% { 
+        transform: translate(0, 0) scale(1);
+        filter: brightness(1) drop-shadow(2vw 0vw 0 #af3c12d7);
+    }
+    50% { 
+        transform: translate(-5%, -5%) scale(1.1);
+        filter: brightness(0.5) drop-shadow(6vw 0vw 0 #3d1709);
+    }
+    100% { 
+        transform: translate(60%, 60%) scale(0.5);
+        filter: brightness(0) drop-shadow(0vw 0vw 0 #af3c12d7);
+    }
+}
+
+@keyframes salidanube {
+    0% { 
+        transform: translate(0, 0) scale(1);
+    }
+    50% { 
+        transform: translate(5%, 5%) scale(1.1);
+    }
+    100% { 
+        transform: translate(-100%, -100%) scale(0.5);
+    }
+}
+@keyframes buttonsdisappear{
+    0% {  transform: translate(0, 0)}
+    100% {  transform: translate(0%, -150%)}
+}
+
+/* Botón de pausa universal - funciona para todos los juegos */
+.pauseButton {
+  position: absolute;
+  background: var(--buttonbackground, rgba(0, 0, 0, 0.5));
+  border: 2px solid var(--buttonborder, rgba(255, 255, 255, 0.3));
+  border-radius: 10px;
+  padding: 0.5vw 0.5vw 0.5vw 0.5vw;
+  color: var(--text, white);
+  top: 1vw;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2vw;
+  z-index: 100;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.pauseButton:hover {
+  background: var(--text, white);
+  color: var(--background, black);
+  box-shadow: 0px 5px 20px var(--text, white);
+  border: 2px solid var(--text, white);
+  transform: translateX(-50%) translateY(-2px);
+}
+
+/* Estilos para botones deshabilitados durante transiciones */
+.menuButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+    .pauseButton{
+        font-size: 4vh; 
+        padding: 1vw !important;
+        border-radius: 20px;
+        width: 2vw !important;
+        backdrop-filter: none !important;
+    }
+    .pauseMenu{
+        margin: 0 auto;
+        padding: 0 auto;
+    }
+    .menupause{
+        padding: 0 !important;
+        border-radius: 0 !important;
+    }
+    .background{
+        background: url(../../assets/everyonePause.jpg) center / cover no-repeat !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        margin: 0 auto;
+    animation: none;
+    box-shadow: none;
+    border: none;
+    box-shadow: none;
+    }
+    .NimbusTitle{
+        width: 71vw;
+        height: 91vh;
+    }
+    .Title{
+        border-left: 50vw solid transparent;
+        border-bottom: 5vw solid transparent;
+        top: 4vh;
+        filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.74))
+    }
+    .Title h2{
+        font-size: 5vh;
+        top: -3vh;
+        left: -21vh;
+        width: max-content;
+        text-shadow: 
+        -1px 1px 0px #020001,
+        -2px 2px 0px #020001,
+        -3px 3px 0px #020001,
+        -4px 4px 0px #020001,
+        -5px 5px 0px #020001
+    }
+    .Title h2 span {
+  display: inline-block; /* necesario para que funcione transform */
+  -webkit-text-stroke: 1px transparent;
+}
+    .Goku{
+        display: none;
+    }
+    .background.salida{
+    animation: none !important;
+    }
+    .buttons{
+        margin-left: 0;
+        top: 10%;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+    }
+    .buttonsSimon{
+        margin-left: 0 !important;
+    }
+    .buttons button:nth-child(1){
+        margin-left: 0;
+    }
+    .buttons button:nth-child(2){
+        margin-left: 0;
+    }
+    .buttons button:nth-child(3){
+        margin-left: 0;
+    }
+    .buttons button:nth-child(4){
+        margin-left: 0;
+    }
+    .buttons button:nth-child(5){
+        margin-left: 0;
+    }
+    .buttons button:nth-child(6){
+        margin-left: 0;
+    }
+    .menuButton, .menuButton:hover, .menuButton.hover {
+        font-size: 4vh;
+        width: max-content;
+    }
+    .menuButton span, .menuButton:hover span, .menuButton.hover span {
+        font-size: 5vh;
+   transform: scale(1);
+    }
+.menuButton:hover .backgroundText,
+.menuButton.hover .backgroundText {
+    width: 105% !important;;
+}
+    .backgroundText{
+        left: none;
+        top: auto;
+        border: none;
+        border-radius: 10vw;
+        background: #faeb3f;
+        transform: rotateX(0deg);
+        width: 0% !important;
+        height: 6vh !important;
+    }
+    .menuButton input[type="range"] {
+    height: 1vh;
+    width: 40vw;
+    margin-left: 2vh !important;
+  outline-width: 1vw;
+    }
+.menuButton input[type="range"]::-webkit-slider-thumb {
+    width: 2vh;
+    height: 2vh;
+}
+.menuButton:hover input[type="range"]::-webkit-slider-thumb,
+.menuButton.hover input[type="range"]::-webkit-slider-thumb,
+.menuButton:hover input[type="range"],
+.menuButton.hover input[type="range"]  {
+        transform: scale(1);
+}
+}

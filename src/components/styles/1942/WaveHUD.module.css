@@ -1,0 +1,53 @@
+.waveCard {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin: 0.5rem 0;
+}
+
+.waveCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(251, 191, 36, 0.2);
+}
+
+.waveLabel {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #fbbf24;
+  opacity: 0.8;
+  text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+}
+
+.waveNumber {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Animación cuando cambia la oleada */
+@keyframes waveChange {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.waveNumber.changing {
+  animation: waveChange 0.3s ease-out;
+}

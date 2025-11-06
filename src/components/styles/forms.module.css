@@ -1,0 +1,177 @@
+/* Botones */
+.buttonContainer {
+  display: grid;
+  gap: 1vw;
+}
+
+.btnInicio {
+  background-color: var(--rojo);
+  padding: 0.5vw 2vw;
+  border-radius: 20px;
+  border: none;
+  max-width: fit-content;
+  justify-self: center;
+  transition: all 0.2s ease-in-out;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 0 20px black;
+}
+
+.btnInicio:hover,
+.btnInicio:active {
+  background-color: #b93d34;
+  outline: none;
+  transform: scale(1.1);
+}
+
+/* Formulario */
+.formOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 110vh;
+  background: transparent;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+.animating {
+  animation: baja 1s forwards;
+}
+
+@keyframes baja {
+  0% { transform: translateY(0); backdrop-filter: blur(10px); }
+  50% { transform: translateY(-2vw); }
+  99% { transform: translateY(100vw); backdrop-filter: blur(0px); }
+  100% { display: none; }
+}
+.formContainer{
+  display: flex;
+  flex-direction: row;
+  gap: 4vw;
+}
+.gameForm {
+  border-radius: 10px;
+  padding: 11vw 5vw 5vw 5vw;
+  min-width: 25vw;
+  min-height: 25vw;
+  gap: 1vw;
+  margin: -20vh auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-image: url('../../assets/tateti/Radar.png');
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/tateti/Radar.avif');
+  }
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 0 30px black);
+  font-family: "Press Start 2P", system-ui;
+}
+
+.formLabel {
+  color: #fff8ba;
+  font-weight: 500;
+  text-shadow: 0 0 5px #ffeb94;
+  text-transform:capitalize;
+  padding: 0 1vw;
+  font-size: 1vw;
+  border-radius: 10px;
+}
+.formControl:active::placeholder{
+  color: var(--background) !important;
+}
+
+.formControl {
+  background: #044125;
+  text-align: center;
+  color: #fff59d;
+  box-shadow: 0 0 20px black;
+  padding: 1vw 0;
+  border-radius: 10vw;
+  width: 100%;
+  font-size: 1vw;
+  font-family: "Press Start 2P", system-ui;
+  transition: all 0.2s ease-in-out;
+}
+.formControl, .startButton, .guestButton{
+    border: 2px solid var(--buttonborder);
+}
+.formControl:focus,
+.formControl:active,
+.formControl:hover,
+.startButton:hover,
+.guestButton:hover {
+  background: var(--text);
+  color: var(--background) !important;
+  box-shadow: 0px 5px 20px var(--text);
+  border: 2px solid var(--text);
+}
+
+.formControl::placeholder {
+  color: #fff59d;
+  opacity: 1;
+  font-style: italic;
+  transition: all 0.3s ease-in-out;
+}
+.formControl:hover::placeholder{
+  color: var(--background) !important;
+}
+/* Botones internos del formulario */
+.buttonContainer {
+  display: grid;
+  gap: 1vw;
+}
+.buttonContainer2{
+  position: relative;
+  margin: 0 auto;
+  justify-self: center;
+  align-self: center;
+  font-size: 4vw;
+}
+.buttonContainer2 .startButton{
+  font-size: 2vw !important;
+}
+.startButton {
+  background-color: var(--rojo);
+  padding: 1vw 2vw;
+  border-radius: 10vw;
+  border: none;
+  max-width: fit-content;
+  justify-self: center;
+  transition: all 0.2s ease-in-out;
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: 0 0 20px black;
+  cursor: pointer;
+  font-size: 1.2vw;
+  font-family: "Press Start 2P", system-ui;
+  border: 2px solid var(--buttonborder);
+}
+
+/* Botón de invitado */
+.guestButton {
+  background-color: var(--buttonbackground);
+  padding: 1vw 1.5vw;
+  border-radius: 10vw;
+  border: none;
+  max-width: fit-content;
+  justify-self: center;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  color: var(--text);
+  border: 2px solid var(--buttonborder);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  font-size: 1vw;
+  font-family: "Press Start 2P", system-ui;
+}

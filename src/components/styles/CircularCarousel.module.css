@@ -1,0 +1,672 @@
+/* Container principal del carousel circular */
+.circularCarousel {
+  position: absolute;
+  bottom: 0vw !important;
+  width: 100vw;
+  height: 100vh;
+  overflow: visible;
+  cursor: grab ;
+  background: rgba(0, 0, 0, 0.582);
+}
+
+.circularCarousel:active {
+  cursor: grab;
+}
+
+/* Canvas container para WebGL */
+.canvasContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  cursor: grab;
+}
+
+/* Container para las cartas HTML */
+.cardsContainer {
+  position: absolute;
+  width: 100%;
+  justify-self: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+  cursor: grab ;
+}
+
+/* Wrapper individual de cada carta */
+.cardWrapper {
+  position: absolute;
+  width: fit-content; 
+  height: auto;
+  pointer-events: all;
+}
+
+/* Carta del juego */
+.carouselItem {
+  width: 25vw;
+  height: 33vw;
+  border-radius: 2vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: black;
+  position: relative;
+  outline: 1px solid var(--buttonborder);
+  transition: 0.3s ease-in-out;
+transform-style: preserve-3d;
+  overflow: visible;
+  opacity: auto;
+  cursor: grab !important;
+}
+/* Clase que marca el juego centrado (añadida dinámicamente) */
+/* El estado visual del juego centrado se aplica directamente sobre el elemento
+   .carouselItem (la clase se añade como `.carouselItem.centeredgame`). Aquí
+   hacemos que tenga el mismo border-radius final que el hover y la misma
+   transición para que el cambio sea suave. */
+.carouselItem.centeredgame {
+  border: 2px solid white !important;
+  border-radius: 2vw; /* mismo valor que .carouselItem:hover */
+  outline: 1px solid white;
+  box-shadow: inset 0 0 20px white;
+  transition: border-radius 0.3s ease-in-out, border 0.2s ease-in-out;
+}
+/* Contenido de la carta */
+.cardContent {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.cardTitle {
+  font-family: "Press Start 2P", system-ui;
+  font-weight: bolder;
+  color: var(--title);
+  font-size: 2.5vw;
+  text-align: center;
+  max-width: 80%;
+  justify-self: center;
+  top: 1vw;
+  position: relative;
+  letter-spacing: -3px;
+}
+
+/* Backgrounds y personajes */
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 2vw;
+  transition: 0.3s ease-in-out;
+  filter: brightness(0.4) blur(3px);
+  cursor: grab ;
+}
+
+.character {
+  position: absolute;
+  width: 100%;
+  height: 80%;
+  bottom: 0vw;
+  transition: 0.3s ease-in-out;
+  z-index: 10;
+  filter: brightness(0.4);
+  cursor: grab ;
+}
+
+/* Hover effects */
+.carouselItem:hover {
+  outline: 1px solid white;
+  transform: translateY(-10px);
+  border-radius: 4vw;
+}
+
+.carouselItem:hover .playButton {
+  background: rgba(0, 0, 0, 0.575);
+}
+
+.carouselItem:hover .playButton .playIcon {
+  filter: drop-shadow(0 0 5px black) brightness(1.5);
+}
+
+.carouselItem:hover .playButton:hover {
+  background: var(--text);
+}
+
+.carouselItem:hover .background {
+  filter: brightness(0.8) blur(1px);
+  border-radius: 4vw;
+}
+
+.carouselItem:hover .character {
+  filter: brightness(1) drop-shadow(0 0 20px rgba(0, 0, 0, 0.63));
+  transform: scale(1.3) translateY(-3vw);
+}
+
+/* Fondos específicos de cada juego */
+.spaceinvaders .background {
+  background: url(../../assets/spaceinvaders/PlanetaVegita.jpg) bottom / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/spaceinvaders/PlanetaVegita.avif');
+  }
+}
+
+.spaceinvaders .character {
+  background: url(../../assets/spaceinvaders/BardockMenu.webp) bottom / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/spaceinvaders/BardockMenu.avif');
+  }
+}
+
+/* .game1942 .background {
+  background: url(../../assets/1942/MenuBackground.webp) bottom / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/1942/MenuBackground.avif');
+  }
+}
+
+.game1942 .character {
+  background: url(../../assets/1942/GokuMenu.webp) center / 90% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/1942/GokuMenu.avif');
+  }
+} */
+
+.piedrapapeltijeras .background {
+  background: url(../../assets/PPT/Background2.jpg) bottom / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/PPT/Background2.avif');
+  }
+}
+
+.piedrapapeltijeras .character {
+  background: url(../../assets/PPT/GokuVegeta.webp) bottom / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/PPT/GokuVegeta.avif');
+  }
+}
+
+.simondice .background {
+  background: url(../../assets/simondice/Background.webp) bottom / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/simondice/Background.avif');
+  }
+}
+
+.simondice .character {
+  background: url(../../assets/simondice/Shenlong.webp) bottom / 70% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/simondice/Shenlong.avif');
+  }
+}
+.tateti .background {
+  background: url(../../assets/tateti/CapsuleCorp.webp) bottom / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/tateti/CapsuleCorp.avif');
+  }
+}
+
+.tateti .character {
+  background: url(../../assets/tateti/Bulma.png) center / 70% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/tateti/Bulma.avif');
+  }
+}
+
+/* Footer de la carta */
+.cardFooter {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1vw;
+}
+
+/* Información de jugadores */
+.playerInfo {
+  width: 80% !important;
+  position: absolute;
+  bottom: 6vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  filter: brightness(0.5) drop-shadow(0 0 5px black);
+  z-index: 10;
+  transition: 0.2s ease-in-out;
+}
+
+.carouselItem:hover .playerInfo {
+  filter: brightness(1) drop-shadow(0 0 10px black);
+}
+
+.players1, .players2COOP, .players2VS {
+  background: url(../../assets/Player1.png) center / 150% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/Player1.avif');
+  }
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/Player1.avif');
+  }
+  width: 4vw;
+  height: 4vw;
+  z-index: 50;
+  cursor: help;
+  position: relative;
+}
+
+/* Botón de jugar */
+.playButton {
+  z-index: 300;
+  padding: 0;
+  font-size: 1vw;
+  text-transform: uppercase;
+  font-weight: lighter;
+  position: absolute;
+  border: 2px solid var(--buttonborder);
+  display: flex;
+  bottom: 1.5vw;
+  width: max-content;
+  padding: 0 1vw;
+  text-align: center;
+  border-radius: 10vw;
+  background: var(--buttonbackground);
+  color: var(--text);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  height: 4vw;
+  width: 7vw;
+  transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  transform: scale(1.4) translateY(-2vh);
+}
+.playCont {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.playItem {
+  transition: transform 0.4s ease, opacity 0.2s ease, filter 0.5s ease-in-out;
+}
+
+.playIcon {
+  -webkit-mask: url(/public/JuegosZLogo.png) center / cover no-repeat;
+  mask: url(/public/JuegosZLogo.png) center / cover no-repeat;
+  background: white !important;
+  height: 3vw;
+  width: 4vw;
+  margin-top: 3vw;
+  filter: drop-shadow(0 0 1px transparent) brightness(0.8);
+}
+
+.spaceinvaders .playIcon /* ,
+.game1942 .playIcon */ {
+  position: relative;
+}
+
+.spaceinvaders .playIcon::before /* ,
+.game1942 .playIcon::before */ {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #ffb71c, #e97224, #ffeb7a, #e97224, #ffb71c);
+  background-size: 300% 100%;
+  animation: energyFlowIcon 4s linear infinite;
+}
+@keyframes energyFlowIcon {
+  0% { background-position: 0% 50% ; }
+  100% { background-position: 300% 50% ; }
+}
+.playText {
+  transform: translateY(2vh); /* escondido debajo */
+  font-weight: bolder;
+  font-family: "Press Start 2P", system-ui;
+}
+
+.playButton:hover {
+  transform: scale(1.5) translateY(-2.3vh);
+  background: var(--text);
+  color: var(--background);
+  box-shadow: 0 5px 20px var(--text);
+}
+
+.playButton:hover .playIcon {
+  transform: translateY(-4vw);
+}
+
+.playButton:hover .playText {
+  opacity: 1;
+  transform: translateY(-3vw);
+}
+.carouselItem:hover .playerInfo{
+  filter: brightness(1) drop-shadow(0 0 10px black);
+}
+.playerInfo{
+  width: calc(100% - 1vw);
+  position: absolute;
+  bottom: 2vw;
+  justify-self: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  filter: brightness(0.5) drop-shadow(0 0 5px black);
+  z-index: 10;
+  transition: 0.2s ease-in-out;
+}
+.players1, .players2COOP, .players2VS{
+  background: url(../../assets/Player1.png) center / 150% no-repeat;
+  width: 60px;
+  height: 60px;
+  z-index: 50;
+  cursor: help;
+}
+.players1 p, .players2COOP p, .players2VS p{
+  position: absolute;
+  justify-self: center;
+  width: max-content;
+  margin-top: 0vw;
+  text-transform: capitalize;
+  padding: 0.2vw 0.5vw;
+  border-radius: 10vw;
+  background: var(--text);
+  color: var(--background);
+  border: 2px solid var(--background);
+  text-shadow: none;
+  transform: scale(0);
+  opacity: 0;
+  transition: 0.2s ease-in-out;
+  z-index: 400;
+}
+.players1:hover p, .players2VS:hover p, .players2COOP:hover p{
+  transform: scale(1);
+  margin-top: -2vw;
+  opacity: 1;
+}
+.players2VS{
+  background: url(../../assets/Player2Vs.png) center / 150% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/Player2Vs.avif');
+  }
+}
+.players2COOP{
+  background: url(../../assets/Player2Coop.png) center / 150% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/Player2Coop.avif');
+  }
+}
+.noplayers{
+  background: none;
+}
+.gap {
+  flex-shrink: 0;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gap::before {
+  content: '';
+  width: 2px;
+  height: 20vw;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.3), transparent);
+  border-radius: 1px;
+}
+
+.indicators {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.indicator {
+  width: 40px;
+  height: 4px;
+  border-radius: 50vw;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.indicatorActive {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #333 !important;
+  border-color: white !important;
+  transform: scale(1.2);
+}
+
+.controls {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+}
+
+.controls p {
+  margin: 5px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.controls p:first-child {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
+
+.entry {
+  animation: fadeIn 3s forwards; /* dura 3s: 1s estático + 2s animación */
+  margin-top: 20vw;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  0% { margin-top: 20vw; opacity: 0; }
+  33% { margin-top: 10vw; opacity: 0.01; } /* Primer 1s estático */
+  66% { margin-top: -1vw; opacity: 1; } /* Empieza animación */
+  100% { margin-top: 0; opacity: 1; }   /* Estado final */
+}
+
+.leave{
+  animation: 4s fadeOut forwards ;
+  opacity: 1;
+  margin-top: 0;
+}
+
+@keyframes fadeOut {
+    0% {opacity: 1; margin-top: 0;}
+  50% {opacity: 0.5; margin-top: -1vw;}
+  100% {margin-top: 5vw; opacity: 0;}
+}
+.cardWrapper[data-distant="true"] .carouselItem:hover .background,
+.cardWrapper[data-distant="true"] .carouselItem:hover .character,
+.cardWrapper[data-distant="true"] .carouselItem:hover .playerInfo {
+  filter: none;
+  transform: none;
+}
+.background,
+.character {
+  transform: translateZ(0); /* Forzar GPU layer */
+  backface-visibility: hidden;
+}
+@media (max-width: 1024px) {
+.carouselItem{
+    height: 70vh;
+    width: 50vh;
+    outline: 1px solid white;
+  transform: translateY(0px);
+  }
+  .carouselItem, .background{
+    border-radius: 5vh;
+  }
+  .cardTitle{
+    font-size:4vh;
+  }
+  .carouselItem:hover, .carouselItem:hover .background{
+    border-radius: 5vh;
+  transform: translateY(0px);
+  }
+  .character{
+    width: 110%; 
+    transform: scale(1.2) translateY(-8%);
+  filter: brightness(1) drop-shadow(0 0 20px rgba(0, 0, 0, 0.63));
+  }
+  .carouselItem:hover .character{
+    transform: scale(1.2) translateY(-8%);
+  }
+  .carouselItem .background {
+  filter: brightness(0.8) blur(1px);
+}
+.simondice .character {
+  background-position: center;
+}
+.piedrapapeltijeras .character {
+  background-position: 100% 90%;
+}
+
+  .carouselItem:hover .playButton .playIcon{
+    filter: brightness(1);
+  }
+  .playButton{
+    width: fit-content;
+    padding: 0 2vw;
+    height: 8vh;
+  background: black;
+    background-color: rgb(255, 255, 255) !important;
+  box-shadow: 0 5px 20px var(--text);
+    filter: brightness(1);
+    transition: 0.3s ease-in-out;
+    transform: scale(1.5) translateY(-40%);
+  }
+  .playButton:hover{
+    transform: scale(1.5) translateY(-40%);
+  }
+  .playIcon{
+    width: 6vh;
+    height: 6vh;
+    background: black !important;
+    filter: brightness(1);
+  }
+  .playText{
+    display: none;
+  }
+  .playIcon{
+    margin-top: 0;
+  }
+  .playButton:hover .playIcon{
+    transform: none;
+  }
+  .playerInfo{
+    bottom: 6vh;
+  filter: brightness(1) drop-shadow(0 0 10px black);
+  }
+}
+@media (max-width: 768px) {
+  .entry {
+  animation: none;
+  margin-top: 0vw;
+  opacity: 1;
+}
+  .circularCarousel{
+    width: 200vw;
+    justify-self: center;
+    align-self: center;
+  }
+.carouselItem.centeredgame {
+border-radius: 5vh;
+}
+  .carouselItem{
+    height: 70vh;
+    width: 50vh;
+    outline: 1px solid white;
+  transform: translateY(0px);
+  }
+  .carouselItem, .background{
+    border-radius: 5vh;
+  }
+  .cardTitle{
+    font-size:4vh;
+  }
+  .carouselItem:hover, .carouselItem:hover .background{
+    border-radius: 5vh;
+  transform: translateY(0px);
+  }
+  .character{
+    width: 110%; 
+    transform: scale(1.2) translateY(-8%);
+  filter: brightness(1) drop-shadow(0 0 20px rgba(0, 0, 0, 0.63));
+  }
+  .carouselItem:hover .character{
+    transform: scale(1.2) translateY(-8%);
+  }
+  .tateti .character{
+  background: url(../../assets/tateti/Bulma.png) center / 60% no-repeat;
+  }
+  .carouselItem .background {
+  filter: brightness(0.8) blur(1px);
+}
+.simondice .character {
+  background-position: center;
+}
+.piedrapapeltijeras .character {
+  background-position: 100% 90%;
+}
+
+  .carouselItem:hover .playButton .playIcon{
+    filter: brightness(1);
+  }
+  .playButton{
+    width: 16vw;
+    height: 8vh;
+  background: black;
+    background-color: rgb(255, 255, 255) !important;
+  box-shadow: 0 5px 20px var(--text);
+    filter: brightness(1);
+    transition: 0.3s ease-in-out;
+    transform: scale(1.5) translateY(-40%);
+  }
+  .playButton:hover{
+    transform: scale(1.5) translateY(-40%);
+  }
+  .playIcon{
+    width: 6vh;
+    height: 6vh;
+    background: black !important;
+    filter: brightness(1);
+  }
+  .playText{
+    display: none;
+  }
+  .playIcon{
+    margin-top: 0;
+  }
+  .playButton:hover .playIcon{
+    transform: none;
+  }
+  .playerInfo{
+    bottom: 3vh;
+  filter: brightness(1) drop-shadow(0 0 10px black);
+  }
+}

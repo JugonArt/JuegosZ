@@ -1,0 +1,64 @@
+{
+  "name": "juegos-z",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/cli": "^7.4.4",
+    "@capacitor/core": "^7.4.4",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "firebase": "^12.5.0",
+    "lucide-react": "^0.544.0",
+    "next": "^15.5.3",
+    "ogl": "^1.0.11",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "optimize:images": "node optimize-images.js",
+    "optimize:media": "node scripts/optimize-media.js",
+    "optimize:audio": "node scripts/optimize-audio.js",
+    "optimize": "npm run optimize:images && npm run optimize:media && npm run optimize:audio",
+    "rebuild:assets": "node scripts/copy-assets-optimized-to-assets.js",
+    "rewrite:assets-refs": "node scripts/replace-assets-paths.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
+    "ffmpeg-static": "^5.1.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "globby": "^13.2.2",
+    "imagemin-cli": "^3.0.0",
+    "imagemin-mozjpeg": "^7.0.0",
+    "imagemin-pngquant": "^5.0.1",
+    "imagemin-webp": "^6.1.0",
+    "sharp": "^0.32.6"
+  }
+}

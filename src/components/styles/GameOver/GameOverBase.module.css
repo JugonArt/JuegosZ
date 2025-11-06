@@ -1,0 +1,384 @@
+/* Estilos base compartidos para componentes de Game Over */
+
+/* Overlay y contenedor principal */
+.gameOverOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.gameOverVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.gameOverModal {
+  border-radius: 2vw;
+  padding: 2rem;
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  border: 1px solid var(--text);
+  box-shadow: inset 0 0 10px var(--buttonborder);
+  animation: modalAppear 0.5s ease-out;
+  background: var(--buttonbackground2);
+  backdrop-filter: blur(5px); 
+  overflow-x: hidden;
+}
+.Kaiosama{
+position: absolute;
+width: 30vw;
+height: 23vh;
+bottom: 0;
+transform: translateY(1vh);
+margin: 0 auto;
+justify-self: center;
+align-self: center;
+background: url(../../../assets/kaiosama.png) center / contain no-repeat, transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/kaiosama.avif');
+  }
+animation: kaioappear 1s ease-out;
+z-index: 0;
+}
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes kaioappear {
+  0% {
+    opacity: 0;
+    transform: translateY(30vh);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(1vh);
+  }
+}
+/* Header del game over */
+.gameOverHeader {
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+}
+.errorMessage {
+  color: #ff4444;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  font-family: var(--pixelfont);
+}
+.gameOverTitle {
+  font-size: 2rem;
+  line-height: 2vw;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: var(--pixelfont);
+}
+
+.gameOverTitle.win {
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00;
+}
+
+.gameOverTitle.lose {
+  color: #ff4444;
+  text-shadow: 0 0 10px #ff4444;
+}
+
+.gameOverSubtitle {
+  font-size: 1.2rem;
+  color: #cccccc;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Formularios y inputs */
+.gameOverForm {
+  margin: 1.5rem 0;
+}
+
+.inputGroup {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.gameOverInput {
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--ki);
+  border-radius: 10vw;
+  background: var(--buttonbackground);
+  color: var(--text);
+  font-size: 1rem;
+  min-width: 200px;
+  text-align: center;
+}
+
+.gameOverInput:focus {
+  outline: none;
+  border-color: #ffed4e;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.gameOverInput::placeholder {
+  color: #999;
+}
+
+/* Botones */
+.gameOverButton {
+  padding: 1vw 2vw;
+  border: 2px solid var(--buttonborder);
+  border-radius: 10vw;
+  background: var(--buttonbackground);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  font-family: var(--pixelfont);
+  width: 10vw;
+  /* Permite saltos de línea en el texto del botón */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.2;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.gameOverButton:hover:not(:disabled) {
+  background: var(--text);
+  transform: translateY(-5px);
+  color: var(--background);
+  box-shadow: 0 10px 30px var(--text);
+}
+
+.gameOverButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #666;
+  border-color: #666;
+  color: #ccc;
+}
+
+.gameOverActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  flex-direction: column;
+}
+
+/* Modifier for multiplayer overlays: make action buttons share available space (1fr each) */
+.multiplayerMode .gameOverActions {
+  /* keep flex layout but prefer a single-row layout when possible */
+  flex-wrap: nowrap;
+  justify-content: stretch;
+  gap: 1rem;
+}
+
+.multiplayerMode .gameOverActions .gameOverButton {
+  width: auto; /* override default 10vw */
+  flex: 1 1 0; /* behave like 1fr columns */
+  min-width: 0; /* allow flex children to shrink properly */
+}
+
+/* For multiplayer guest/single-column input groups: make inputs and buttons expand to fill available space */
+.multiplayerMode .inputGroup {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  width: 100%;
+}
+
+.multiplayerMode .inputGroup .gameOverInput {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+}
+
+.multiplayerMode .inputGroup .gameOverButton {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+}
+
+/* Level info row for multiplayer single-sector: two equal sectors */
+.multiplayerLevelInfo {
+  display: flex;
+  gap: 1rem;
+  margin: 0.8rem 0;
+}
+
+.multiplayerLevelInfo .levelSector {
+  flex: 1 1 0;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,215,0,0.12);
+  padding: 0.8rem;
+  border-radius: 1vw;
+  text-align: center;
+}
+
+/* singleplayer modifier: make main action buttons and save button/input area expand to occupy available space */
+.singleplayerMode .gameOverActions {
+  flex-wrap: nowrap;
+  justify-content: stretch;
+  gap: 1rem;
+}
+
+.singleplayerMode .gameOverActions .gameOverButton {
+  width: auto;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* when singleplayer shows a save button alongside the input, allow a balanced split */
+.singleplayerMode .inputGroup {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.singleplayerMode .inputGroup .gameOverInput {
+  flex: 2 1 0;
+  min-width: 0;
+}
+
+.singleplayerMode .inputGroup .gameOverButton {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Información específica del juego */
+.gameSpecificInfo {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 2vw;
+  padding: 1vw 3rem;
+  margin: 0rem 0;
+  text-align: center;
+}
+
+.gameSpecificInfo p {
+  margin: 0.5rem 0;
+  color: #cccccc;
+  font-size: 1rem;
+}
+
+.highlight {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.gameSpecificContent {
+  margin: 1.5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gameOverModal {
+    padding: 3rem;
+    margin: 1rem;
+    border-radius: 6vw;
+  }
+  .multiplayerMode .gameOverTitle {
+    font-size: 1rem !important;
+  }
+  .multiplayerMode .gameOverModal{
+    padding: 1rem;
+    width: 100% !important;
+  }
+  .gameOverTitle {
+    font-size: 2rem;
+    line-height: 105% !important;
+    word-spacing: -2vh !important;
+    line-break:anywhere !important;
+    overflow: hidden;
+    height: 100% !important;
+  }
+  
+  .gameOverSubtitle {
+    font-size: 1rem;
+  }
+  
+  .inputGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .gameOverInput {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .gameOverActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .gameOverButton{
+    width: 100%;
+    padding: 2vh;
+    letter-spacing: 0.5vw !important;
+  }
+  .Kaiosama{
+transform: translateY(10vh);
+width: 50vw;
+  }
+  @keyframes kaioappear {
+  0% {
+    opacity: 0;
+    transform: translateY(30vh);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(1vh);
+  }
+}
+
+.singleplayerMode .inputGroup {
+  gap: 3vw;
+  }
+.gameOverInput {
+  width: 100% !important;
+  padding: 1vh 0vw !important;
+  font-size: 4vw;
+  }
+}

@@ -1,0 +1,2204 @@
+/* Juego.module.css */
+:root {
+  --primary: #00ff00;
+  --primary2: #fab20e;
+  --background: #0d0f13;
+  --text: #e9fffd;
+  --ki: #a3cbff;
+  --redki: #ff5983;
+  --scouterNum: #ffff97;
+  --scoutershine: #ffff00;
+  --buttonbackground: #0000004d;
+  --buttonbackground2:rgba(0, 0, 0, 0.699);
+  --buttonborder: #ffffff33;
+  --logo: #ebac33;
+  --title: #ff0055cb;
+  --pixelfont: "Press Start 2P", system-ui;
+}
+.spaceContainer {
+  background: url(../../../assets/spaceinvaders/PlanetaVegita.jpg);
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/PlanetaVegita.avif');
+  }
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  overflow: hidden;
+  color: white;
+  font-family: '"Courier New", monospace';
+  position: relative;
+}
+
+/* Menu styles */
+.gameMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.226);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  perspective: 1000px;
+}
+.BardockMenu{
+  width: 50vw;
+  height: 100%;
+  background: url(../../../assets/spaceinvaders/BardockMenu.webp) bottom / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/BardockMenu.avif');
+  }
+  position: absolute;
+  margin: 0 auto;
+  justify-self: center;
+  bottom: 0;
+  z-index: 3;
+  margin-bottom: -100vw;
+  animation: 
+  /* auraGlowBardock 1s infinite linear, */
+  BardockMove 0.2s infinite linear,
+  appearDown 2s forwards 0.5s;
+}
+.menuContainer {
+  text-align: center;
+  width: max-content;
+  height: 100%;
+  border-radius: 15px;
+  align-items: end;
+  justify-content: end;
+  perspective: 1000px;
+}
+.Titles{
+  transform-style: preserve-3d;
+    transform: rotateX(-20deg);
+}
+.gameTitle {
+  margin-top: -100vw;
+  font-size: 12vw;
+  font-weight: bolder;
+  color: rgba(255, 0, 85, 0.795);
+  line-height: 5vw;
+  font-family: "Press Start 2P", system-ui;
+    font-weight: bolder;
+    letter-spacing: -1vw;
+  display: grid;
+  flex-direction: column;
+  gap: 7vw;
+  cursor: default;
+  animation: appearUp 2s forwards 0.2s;
+}
+.gameSubtitle {
+  font-size: 1.2rem;
+  color: #ffd700;
+  font-family: "Press Start 2P", system-ui;
+  text-align: right;
+  float: right;
+  width: 100%;
+  margin-top: -5%;
+  align-self:self-end;
+  line-height: 0vw;
+  cursor: default;
+}
+.menuOptions {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 30px;
+  position: absolute;
+  bottom: 4vw;
+  width: 55%;
+  flex: 1;
+  justify-self: center;
+  align-self: center;
+  align-items: end;
+  justify-content: space-around;
+  z-index: 20;
+  gap: 5vw;
+
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0vw 2vw;
+  font-size: 1.5vw;
+  font-weight: bold;
+  background: var(--buttonbackground);
+  color: white;
+  border-radius: 3vw;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid var(--buttonborder);
+  z-index: 10;
+  backdrop-filter: blur(6px);
+  flex-direction: row;
+  white-space: nowrap;
+  flex: 1;
+  min-height: 5vw;
+  will-change: transform;
+  transform: scale(1);
+  transform-origin: center bottom;
+  z-index: 10000 !important;
+  transition: 0.5s ease-in-out !important; 
+  font-family: Arial;
+}
+
+.menuButton:hover { 
+  color: var(--text); 
+  transform: translateY(-3px) scale(1); 
+  border-color: var(--text); 
+  box-shadow: 0 0 20px var(--ki), inset 0 0 30px var(--ki); 
+}
+
+.menuButton:active { 
+  transform: translateY(-1px) scale(1); 
+}
+
+.expandedButton {
+  background: var(--buttonbackground) !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+  border-radius: 2vw !important;
+  display: flex;
+  padding: 1vw 2vw;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  position: relative;
+  min-height: 11vw;
+  transition: 0.4s ease-in-out !important;
+  font-family: "Press Start 2P", system-ui !important;
+}
+
+.nameSelectorContent { 
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-self: center; 
+  max-height: 0;
+  width: 100%;
+  opacity: 0;
+  max-width: 0;
+  transform: scale(0.2);
+  overflow: visible;
+  visibility: hidden;
+  transition: max-height 0.1s ease-in-out, opacity 0s ease-in-out, transform 0.1s ease-in-out, visibility 0s linear 0.4s, max-width 0s ease-in-out !important ;
+}
+
+.nameSelectorContent.active {
+  opacity: 1;
+  max-height: 500px;
+  width: 100%;
+  max-width: 100%;
+  transform: scale(1);
+  visibility: visible;
+  transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out, transform 0.4s ease-in-out, visibility 0.4s linear !important;
+  transition-delay: 0s !important;
+}
+
+.nameSelectorContent >*{
+  border-radius: 10vw; 
+}
+
+.SelectButton{
+  background: var(--buttonbackground);
+  backdrop-filter: blur(5px);
+  border: 2px solid var(--buttonborder);
+  color: var(--text);
+  font-size: 0.8vw !important;
+  border-radius: 10vw;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out !important;  
+  font-family: "Press Start 2P", system-ui !important;
+  letter-spacing: -2px;
+  padding: 0.7em 0;
+}
+
+.SelectButton:hover{
+  background: var(--text);
+  color: var(--background);
+  box-shadow: 0px 20px 20px var(--text);
+  border: 2px solid var(--text);
+  transform: translateY(-5px);
+}
+
+.nameInput { 
+  font-size: 1em; 
+  margin-bottom: 1vw; 
+  text-align: center; 
+  resize: none; 
+  min-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  height: auto;
+  min-height: auto;
+  line-height: 1.2;
+}
+
+.guestButton { 
+  font-weight: bold; 
+  margin-bottom: 1vw; 
+  font-size: 1em; 
+  cursor: pointer; 
+  transition: background 0.2s; 
+}
+
+.actionButtons { 
+  display: flex; 
+  flex-direction: row; 
+  gap: 1vw; 
+  width: 100%; 
+  margin-bottom: 0.7vw; 
+}
+
+.playButton { 
+  font-weight: bold; 
+  font-size: 1.1em; 
+  cursor: pointer; 
+  flex: 1; 
+  transition: background 0.2s; 
+  background: var(--text) !important;
+  color: var(--buttonbackground) !important;
+  text-shadow: 0 0 1px var(--background);
+  box-shadow: 0px 5px 20px var(--text) !important;
+  border: 2px solid var(--text) !important;
+}
+
+.playButton:disabled { 
+  opacity: 0.5;
+  cursor: not-allowed; 
+  background: var(--buttonbackground) !important;
+  color: var(--text) !important;
+  box-shadow: none !important; 
+  border-color: var(--buttonborder) !important;
+  transition: opacity 0.3s ease-in-out !important;
+}
+
+.playButton:disabled:hover { 
+  opacity: 0.2;
+  transform: translate(0, 0);
+}
+
+.playButton:hover:not(:disabled) { 
+  background: var(--text) !important;
+  color: var(--background) !important;
+  box-shadow: 0px 5px 20px var(--text) !important;
+  border: 2px solid var(--text) !important;
+}
+
+.exitButton { 
+  font-weight: bold; 
+  font-size: 1.1em; 
+  cursor: pointer; 
+  flex: 1; 
+  transition: background 0.2s; 
+}
+
+.errorMsg { 
+  color: var(--text);
+  font-size: 1vw;
+  position: absolute;
+  margin-top: -3vw; 
+  text-shadow: 2px 0 0 black, 0 2px 0 black, -2px 0 0 black, 0 -2px 0 black;
+  text-align: center;
+  font-family: Arial, system-ui !important;
+  letter-spacing: -2px; 
+}
+
+.menuControls {
+  position: absolute;
+  justify-self: center;
+  z-index: 10;
+  bottom: 1vw;
+  font-size: 1vw;
+  color: var(--text);
+  text-shadow: 0 2px 5px black;
+  line-height: 0;
+  z-index: 20;
+  width: 100%;;
+  cursor: default;
+}
+
+.menuControls p:first-child {
+  font-weight: bold;
+  color: #ffd700;
+  z-index: 20;
+  margin-left: -1.5vw;
+}
+.menuButton:hover .playersIcon{
+    filter: drop-shadow(0 0 4px white);
+}
+.playersIcon{
+    width: 3em;
+    height: 3em;
+    filter: drop-shadow(0 0 4px black);
+    transition: 0.3s ease-in-out;
+}
+.player2Icon{
+  background: url(../../../assets/Player2Vs.png) center / 140% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/Player2Vs.avif');
+  }
+}
+.player1Icon{
+  background: url(../../../assets/Player1.png) center / 140% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/Player1.avif');
+  }
+}
+
+/* Game container and layout */
+.gameContainer {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.gameContainer * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.ship {
+  width: 60vw;
+  height: 60vh;
+  position: absolute;
+  background: url(../../../assets/spaceinvaders/FreezerShip.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/FreezerShip.avif');
+  }
+  top: -30%;
+  left: 50%;
+  z-index: 0;
+  /* ejecutar primero floatAppearing (2s), luego float */
+  animation: floatAppearing 2s ease forwards, float 3s linear 2s infinite;
+  /* o con un pequeño margen para evitar empalmes */
+  animation: floatAppearing 2s ease forwards, float 3s linear 2.05s infinite;
+}
+
+/* special enemy and giant sphere attack */
+.specialEnemy {
+  position: absolute;
+  width: 7vw;
+  height: 7vw;
+  background: url(../../../assets/spaceinvaders/FreezerAlien.png) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/FreezerAlien.avif');
+  }
+  z-index: 25;
+  transition: transform 0.4s linear;
+}
+
+/* Freezer state visuals (dataset state applied in JS) */
+.specialEnemy[data-state="sweeping"] {
+  filter: drop-shadow(0 0 6px rgba(0,200,255,0.25));
+  opacity: 1;
+}
+.specialEnemy[data-state="moveToHalf"] {
+  transform: translateY(-4%);
+  filter: drop-shadow(0 0 8px rgba(0,255,200,0.25));
+}
+.specialEnemy[data-state="approachHalf"] {
+  transform: translateY(-2%);
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.12));
+}
+.specialEnemy[data-state="preFire"]{
+  filter: drop-shadow(0 0 18px rgba(255,120,40,0.35));
+}
+.specialEnemy[data-state="fired"] {
+  filter: drop-shadow(0 0 26px rgba(255,80,40,0.45));
+}
+.specialEnemy[data-state="departing"] {
+  opacity: 0.95;
+  transform: rotate(8deg) scale(0.98);
+  transition: transform 0.6s linear, opacity 0.6s ease;
+}
+
+.giantSphere {
+  position: absolute;
+  width: 15vw;
+  height: 15vw;
+  background: url(../../../assets/spaceinvaders/DeathBall.jfif) top / cover no-repeat;
+  border-radius: 50%;
+  box-shadow: 0 0 150px rgba(255,60,0,0.7),
+              inset 0 0 80px rgba(255,220,150,0.5),
+              0 0 30px rgba(255,255,255,0.8);
+  z-index: 200;
+  pointer-events: none;
+  opacity: 1;
+  transform-origin: center center;
+}
+
+
+@keyframes spherePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 150px rgba(255,60,0,0.7),
+                inset 0 0 80px rgba(255,220,150,0.5),
+                0 0 30px rgba(255,255,255,0.8);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 180px rgba(255,60,0,0.8),
+                inset 0 0 100px rgba(255,220,150,0.6),
+                0 0 40px rgba(255,255,255,0.9);
+  }
+}
+
+@keyframes freezerCharge {
+  0% { transform: scale(0) rotate(0deg); filter: drop-shadow(0 0 6px rgba(255,120,40,0.2)); }
+  50% { transform: scale(2) rotate(-1deg); filter: drop-shadow(0 0 14px rgba(255,160,80,0.28)); }
+  100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 18px rgba(255,200,120,0.34)); }
+}
+@keyframes scoreFloat {
+  0% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+}
+/* Info panel and HUD */
+.info {
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.info > * {
+  pointer-events: auto;
+}
+
+.score {
+  position: absolute;
+  top: -1vw;
+  right: 0;
+  font-size: 1vw;
+  background: url(../../../assets/spaceinvaders/scouter.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/scouter.avif');
+  }
+  width: 20vw;
+  backdrop-filter: blur(10px);
+  height: 20vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+  animation: entrada 3s forwards;
+  animation-delay: 0.5s;
+  z-index: 20;
+  text-align: center;
+  font-family: var(--pixelfont);
+}
+
+.score > * {
+  max-width: 80%;
+}
+
+.score span {
+  text-align: center;
+  font-size: 2.5vw;
+  color: var(--scouterNum);
+  font-weight: bolder;
+  text-shadow: 0 0 10px var(--scoutershine);
+}
+
+/* Alien counters */
+.alienCounters {
+  position: absolute;
+  left: 1vw;
+  top: 1vw;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  font-size: 1.2vw;
+  justify-content: center;
+  z-index: 20;
+}
+
+.alienCounter {
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  padding: 0.5vw 1vw;
+  background: var(--buttonbackground);
+  border-radius: 10vw;
+  border: 1px solid var(--buttonborder);
+  backdrop-filter: blur(10px);
+  cursor: default;
+  transition: 0.3s ease-in-out;
+  opacity: 0;
+  animation: entrada 3s forwards;
+  animation-delay: 0.2s;
+}
+
+.alienCounter:hover {
+  transform: scale(1.2);
+}
+
+.alienIcon {
+  width: 3vw;
+  height: 2vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1vw;
+  font-size: 2vw;
+  font-weight: bold;
+}
+
+.alienIcon.type1 {
+  background: url(../../../assets/spaceinvaders/saibaimanicon.webp);
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/saibaimanicon.avif');
+  }
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.alienIcon.type2 {
+  background: url(../../../assets/spaceinvaders/Solidericon.webp);
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/Solidericon.avif');
+  }
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.alienIcon.type3 {
+  background: url(../../../assets/spaceinvaders/ginyuicon.webp);
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/ginyuicon.avif');
+  }
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Lives bar */
+.livesBar {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--buttonbackground);
+  border-radius: 20px;
+  border: 2px solid var(--buttonborder);
+  box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  position: absolute;
+  bottom: 1vw;
+  left: 1vw;
+  z-index: 15;
+}
+
+.life {
+  width: 7vw;
+  height: 12px;
+  border-radius: 6px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--buttonborder);
+}
+
+/* Vida inactiva: occupies zero width and transitions to full width when activated */
+.vidainactiva {
+  width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+  border: none;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s ease;
+}
+
+
+
+.life.active {
+  background: linear-gradient(90deg, #00ff88, #00cc66);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+  border-color: #00ff88;
+}
+
+.life.red {
+  background: linear-gradient(90deg, #e92466, #c20707);
+  box-shadow: 0 0 15px #c2070771;
+  border-color: #e92466;
+  animation: pulse2 1s infinite;
+}
+
+.life.yellow {
+  background: linear-gradient(90deg, #ffdd00, #ff9900);
+  box-shadow: 0 0 15px rgba(255, 221, 0, 0.6);
+  border-color: #ffdd00;
+  animation: pulse2 1.5s infinite alternate;
+}
+
+.life.inactive {
+  background: linear-gradient(90deg, #333333, #555555);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-color: var(--buttonborder);
+}
+
+.livesBar.lowLives {
+  border-color: #e92466;
+  box-shadow: 0 0 15px rgba(233, 36, 102, 0.8);
+  animation: pulse2 1s infinite;
+  opacity: 1;
+}
+
+.goodLives {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--buttonbackground);
+  border-radius: 20px;
+  border: 2px solid var(--buttonborder);
+  box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  position: absolute;
+  bottom: 1vw;
+  left: 1vw;
+  z-index: 15;
+  opacity: 0;
+  animation: entrada 3s forwards;
+  animation-delay: 0.2s;
+}
+
+/* Super power */
+.super {
+  position: absolute;
+  right: 4vw;
+  bottom: 1.5vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 1vw;
+  opacity: 0;
+  animation: entrada 3s forwards;
+  animation-delay: 0.8s;
+  perspective: 100px !important;
+  z-index: 300;
+}
+.superPoints{
+  font-family: var(--pixelfont);
+  font-size: 0.7vw;
+  font-weight: bold;
+  text-shadow: 0 3px 0 black, 3px 0 0 black, 0 -3px 0 black, -3px 0 0 black;
+}
+.superOrb {
+  width: 5vw;
+  height: 5vw;
+  border-radius: 50%;
+  background: url(../../../assets/spaceinvaders/super.webp) center / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/super.avif');
+  }
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), inset 0 0 30px rgba(0, 200, 255, 0.6);
+  outline: 2px solid var(--ki);
+  animation: superReady 1.5s infinite ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.superOrb.off {
+  filter: grayscale(100%) brightness(0.5);
+  box-shadow: 0 0 5px var(--buttonborder);
+  animation: none;
+}
+
+.superStatus {
+  color: var(--text);
+  font-size: 0.8vw;
+  font-weight: bold;
+  text-align: center;
+  min-height: 1.2vw;
+  perspective: 100px !important;
+  transform: rotate3d(1, 0, 0, 10deg) !important;
+  width: 10vw;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+.optionLabel {
+  position: absolute;
+  font-size: 0.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: var(--text);
+  background: var(--buttonbackground);
+  border: 1px solid var(--buttonborder);
+  font-family: var(--pixelfont);
+  padding: 0.5vw 3vw;
+  border-radius: 5px;
+  box-shadow: 0 10px 0 var(--buttonbackground);
+  transition: 0.1s ease-in-out;
+}
+.optionLabel.clicked {
+  box-shadow: 0 -8px 0 var(--buttonbackground);
+  filter:saturate(50%) grayscale(50%) brightness(1.2);
+  transform: translateY(10px) !important;
+  color: var(--buttonborder);
+  border-bottom: 1px solid transparent;
+  border-radius: 5px 5px 0 0;
+}
+.optionLabel.denied {
+  border-color: var(--redki);
+  background: var(--redki);
+  color: black;
+  box-shadow: none;
+  filter: opacity(0.5);
+  animation: error 0.3s infinite;
+} 
+@keyframes error {
+  0%, 100% {transform: translateX(0px);}
+  25% {transform: translateX(5px);}
+  75% {transform: translateX(-5px);}
+}
+/* Game area */
+.gameAreaWrapper {
+  position: absolute;
+  inset: 0;
+  margin: 0 auto;
+  transform: translateX(0%);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: entrada2 3s forwards;
+  animation-delay: 1s;
+  z-index: 2;
+}
+
+.gameArea {
+  width: 80%;
+  height: 90%;
+  left: 0;
+  inset: 0;
+  align-self: center;
+  justify-self: center;
+  position: absolute;
+  border-radius: 10px;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8vw !important;
+  font-weight: bold;
+  font-family: var(--pixelfont);
+  color: var(--text);
+  text-shadow: 8px 0 0 black, 0 8px 0 black, -8px 0 0 black, 0 -8px 0 black !important;
+}
+
+/* Game entities */
+.invader {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.5s ease-out;
+  filter: drop-shadow(0 0 1px var(--background));
+  z-index: 10;
+}
+
+.invader.type1 {
+  background: url(../../../assets/spaceinvaders/Saibaiman.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/Saibaiman.avif');
+  }
+  width: 20px;
+  height: 16px;
+}
+
+.invader.type2 {
+  background: url(../../../assets/spaceinvaders/Soldier1.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/Soldier1.avif');
+  }
+  width: 20px;
+  height: 16px;
+  margin-top: 10px;
+}
+
+.invader.type3 {
+  background: url(../../../assets/spaceinvaders/ginyu.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/ginyu.avif');
+  }
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/ginyu.avif');
+  }
+  width: 20px;
+  height: 16px;
+}
+/* Invader hit/dying tint */
+.invaderHit {
+  filter: grayscale(0%) brightness(2) sepia(1) hue-rotate(-50deg) saturate(500%) !important;
+}
+/* Invader row scaling */
+.invader.row1,
+.invader.row2 {
+  transform: scale(2.5) !important;
+}
+
+.invader.row5 {
+  margin-top: -1vw;
+  transform: scale(5) !important;
+}
+
+.invader.row4 {
+  transform: scale(4.5) !important;
+}
+
+.invader.row3 {
+  margin-top: 1vw;
+  transform: scale(4) !important;
+}
+
+.invader.row2 {
+  transform: scale(7) !important;
+}
+
+.invader.row1 {
+  margin-top: 1.5vw;
+  transform: scale(6.5) !important;
+}
+
+.invader.row0 {
+  margin-top: 1.5vw;
+  transform: translateX(0%) translateY(-2vw) scale(6.5) !important;
+}
+
+/* Special boss characters */
+.invader.row0.col0 {
+  background: url(../../../assets/spaceinvaders/guldo.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/guldo.avif');
+  }
+  transform: translateX(0%) translateY(-2vw) scale(4) !important;
+}
+
+.invader.row0.col1 {
+  background: url(../../../assets/spaceinvaders/recoome.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/recoome.avif');
+  }
+  transform: translateX(0%) translateY(-2vw) scale(9) !important;
+}
+
+.invader.row0.col2 {
+  background: url(../../../assets/spaceinvaders/ginyu.webp) center / contain no-repeat;
+}
+
+.invader.row0.col3 {
+  background: url(../../../assets/spaceinvaders/jeice.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/jeice.avif');
+  }
+}
+
+.invader.row0.col4 {
+  background: url(../../../assets/spaceinvaders/burter.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/burter.avif');
+  }
+  transform: translateX(0%) translateY(-2vw) scale(9) !important;
+}
+
+/* Shooter (player) */
+.shooter {
+  position: absolute;
+  background: url(../../../assets/spaceinvaders/Bardock.webp) center / contain no-repeat padding-box;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/Bardock.avif');
+  }
+  width: 8px;
+  height: 20px;
+  transition: 0.3s ease-in-out;
+  transform: scale(10);
+  z-index: 10;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.397));
+}
+
+.shooter.izq {
+  background: url(../../../assets/spaceinvaders/BardockIzq.webp) center / contain no-repeat padding-box;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/BardockIzq.avif');
+  }
+}
+
+.shooter.der {
+  background: url(../../../assets/spaceinvaders/BardockDer.webp) center / contain no-repeat padding-box;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/BardockDer.avif');
+  }
+}
+
+.shooter.derSuper {
+  background: url(../../../assets/spaceinvaders/BardockSuper.webp) center / contain no-repeat padding-box;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/BardockSuper.avif');
+  }
+  filter: drop-shadow(0 0 2px rgba(0, 238, 255, 0.397));
+}
+
+.shooter.stunned {
+  animation: stunnedShake 0.3s ease-in-out;
+  transform: scale(9) translateY(0vw);
+}
+/* Projectiles */
+.laser {
+  position: absolute;
+  background-color: var(--text);
+  width: 1vw !important;
+  height: 1vw !important;
+  transform: translateX(-1vw);
+  box-shadow: 0 0 10px var(--ki), inset 0 0 4px var(--ki);
+  border-radius: 10vw;
+  transition: all 0.05s linear;
+  z-index: 2;
+}
+
+.enemyLaser {
+  position: absolute;
+  background-color: var(--text);
+  width: 1vw !important;
+  height: 1vw !important;
+  transform: translateX(-1vw);
+  box-shadow: 0 0 10px var(--redki), inset 0 0 4px var(--redki);
+  border-radius: 10vw;
+  transition: all 0.05s linear;
+  z-index: -1;
+}
+
+.superBeam {
+  position: absolute;
+  background: url(../../../assets/spaceinvaders/super.gif) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/super.gif');
+  }
+  width: 3vw !important;
+  height: 3vw !important;
+  transform: translateX(-1vw) rotate(-90deg);
+  filter: drop-shadow(0 0 10px var(--ki));
+  transition: all 0.02s linear;
+}
+
+.boom {
+  position: absolute;
+  background: url(../../../assets/spaceinvaders/explotion.gif) center / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/explotion.gif');
+  }
+  transform: translateX(-2vw) translateY(-2vw);
+  width: 3vw !important;
+  height: 3vw !important;
+  border-radius: 50%;
+  z-index: 100;
+}
+
+/* Shields */
+.shield {
+  position: absolute;
+  z-index: 1;
+  border-radius: 10px;
+  filter: drop-shadow(0 0 5px var(--primary));
+  transition: all 0.2s ease;
+}
+
+.shieldGroup0 {
+  background: url(../../../assets/spaceinvaders/tora.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/tora.avif');
+  }
+}
+
+.shieldGroup1 {
+  background: url(../../../assets/spaceinvaders/borgos.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/borgos.avif');
+  }
+}
+
+.shieldGroup2 {
+  background: url(../../../assets/spaceinvaders/fasha.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/fasha.avif');
+  }
+}
+
+.shieldGroup3 {
+  background: url(../../../assets/spaceinvaders/shugesh.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/shugesh.avif');
+  }
+}
+
+/* Shield damage states */
+.shield.damage0 {
+  opacity: 1;
+  filter: drop-shadow(0 0 5px var(--primary)) brightness(1);
+}
+
+.shield.damage1 {
+  opacity: 0.9;
+  filter: drop-shadow(0 0 5px var(--primary)) brightness(0.9) contrast(1.1);
+}
+
+.shield.damage2 {
+  opacity: 0.8;
+  filter: drop-shadow(0 0 3px orange) brightness(0.8) contrast(1.2) saturate(0.8);
+}
+
+.shield.damage3 {
+  opacity: 0.7;
+  filter: drop-shadow(0 0 3px red) brightness(0.7) contrast(1.3) saturate(0.6);
+  animation: damageFlicker 0.5s infinite alternate;
+}
+
+.shield.damage4,
+.shield.damage5 {
+  opacity: 0.6;
+  filter: drop-shadow(0 0 2px darkred) brightness(0.5) contrast(1.5) saturate(0.3);
+  animation: damageFlicker 0.3s infinite alternate;
+}
+
+.shield.damage6 {
+  opacity: 0.3;
+  filter: drop-shadow(0 0 2px darkred) brightness(0.5) contrast(1.5) saturate(0.3);
+  animation: damageFlicker 0.3s infinite alternate;
+}
+
+.shield.damage7 {
+  opacity: 0;
+  filter: drop-shadow(0 0 2px darkred) brightness(0.5) contrast(1.5) saturate(0.3);
+  animation: damageFlicker 0.3s infinite alternate;
+}
+
+/* Shield health bars */
+.shieldContainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.shieldHealthBar {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  padding: 4px 6px;
+  transform: translateY(-1vw);
+  background: var(--buttonbackground);
+  border-radius: 15px;
+  border: 1px solid var(--buttonborder);
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.shieldHealthSegment {
+  width: 8px;
+  height: 4px;
+  border-radius: 2px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--buttonborder);
+}
+
+.shieldHealthSegment.active {
+  background: linear-gradient(90deg, #00ff88, #00cc66);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+  border-color: #00ff88;
+}
+
+.shieldHealthSegment.damaged {
+  background: linear-gradient(90deg, #ffdd00, #ff9900);
+  box-shadow: 0 0 8px rgba(255, 221, 0, 0.4);
+  border-color: #ffdd00;
+}
+
+.shieldHealthSegment.critical {
+  background: linear-gradient(90deg, #e92466, #c20707);
+  box-shadow: 0 0 8px rgba(233, 36, 102, 0.6);
+  border-color: #e92466;
+  animation: shieldPulse 1s infinite;
+}
+
+.shieldHealthSegment.inactive {
+  background: linear-gradient(90deg, #333333, #555555);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  border-color: var(--buttonborder);
+}
+
+.shieldHealthBar.highHealth {
+  border-color: #00ff88;
+  box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
+}
+
+.shieldHealthBar.mediumHealth {
+  border-color: #ffdd00;
+  box-shadow: 0 2px 8px rgba(255, 221, 0, 0.3);
+}
+
+.shieldHealthBar.lowHealth {
+  border-color: #e92466;
+  box-shadow: 0 2px 8px rgba(233, 36, 102, 0.4);
+  animation: shieldHealthPulse 1.5s infinite;
+}
+
+/* Power-ups */
+.powerUp {
+  position: absolute;
+  background: url(../../../assets/spaceinvaders/Senzu.webp) center / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/spaceinvaders/Senzu.avif');
+  }
+  width: 1.5vw;
+  height: 1.5vw;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+  transition: all 0.1s linear;
+}
+
+/* Controls */
+.controls {
+  position: absolute;
+  bottom: 1vw;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.playerTurn {
+  /* Moved: will appear above the lives bar (bottom-left area) */
+  position: absolute;
+  bottom: 6.6vh; /* slightly above lives */
+  left: 1vw;
+  transform: translate(0, 0);
+  font-size: 1.0em;
+  color: var(--text);
+  font-family: var(--pixelfont);
+  padding: 0.5vw 1vw;
+  background: rgba(0,0,0,0.25);
+  border-radius: 10vw;
+  z-index: 120;
+}
+
+/* Persistent HUD: level number and central countdown overlay when game area is unmounted */
+.persistentHud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* don't block inputs */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.levelIndicatorPersist {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  text-align: center;
+  z-index: 0 !important; /* behind in-game HUD elements */
+  font-family: var(--pixelfont) !important;
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+}
+
+.levelIndicatorPersist .levelText {
+  opacity: 0.55;
+  font-size: 3vw;
+  color: rgba(255, 255, 255, 0.534);
+  word-spacing: -2vw;
+  letter-spacing: -0.2vw;
+}
+
+.levelIndicatorPersist .playerText {
+  opacity: 0.3;
+  font-size: 2vw;
+  color: var(--text);
+  letter-spacing: -0.1vw;
+  text-shadow: 0 0 10px rgba(255, 255, 0, 0.2);
+}
+
+/* Keep countdown visually on top of the level text when active */
+.countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8vw;
+  color: white;
+  text-shadow: 0 0 30px rgba(0,0,0,0.7);
+  z-index: 110;
+  pointer-events: none;
+}
+
+/* Video containers */
+.superVideoContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--buttonbackground);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.superVideo {
+  width: 70%;
+  height: 70%;
+  border-radius: 3vw;
+  object-fit: cover;
+}
+
+/* Player transition */
+.playerTransitiona {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.transitionContent {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text);
+  font-family: var(--pixelfont);
+  display:flex;
+    justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.transitionContent h2 {
+  font-size: 3vw;
+  color: var(--scouterNum);
+  text-shadow: 0 0 20px var(--scoutershine);
+  margin-bottom: 2rem;
+  animation: titleGlow 2s ease-in-out infinite alternate;
+  max-width: 80%;
+}
+
+.transitionContent p {
+  font-size: 1.5vw;
+  margin: 1rem 0;
+  color: var(--text);
+  font-family: var(--pixelfont);
+  opacity: 0.9;
+  animation: textFade 1s ease-in-out;
+}
+
+.continueText {
+  font-size: 1.5vw;
+  font-family: var(--pixelfont);
+  margin-top: 3rem !important;
+  animation: pulsatingText 4s infinite,
+  fadeInOut 0.5s infinite !important;
+}
+
+@keyframes titleGlow {
+  0% {
+    text-shadow: 0 0 20px var(--scoutershine);
+    transform: scale(1);
+  }
+  100% {
+    text-shadow: 0 0 40px var(--scoutershine), 0 0 60px var(--scoutershine);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes textFade {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulsatingText {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+@keyframes fadeInOut {
+  0%, 100% {   text-shadow: -4px 0 0px black, 0 4px 0px black, 4px 0 0px black, 0 -4px 0px black; color: white}
+  50% {   text-shadow: -4px 0 0px white, 0 4px 0px white, 4px 0 0px white, 0 -4px 0px white; color: black;}
+}
+
+/* Mobile controls */
+.mobileControls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 3vw;
+  width: 100%;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.mobileMovement,
+.mobileActions {
+  display: flex;
+  gap: 2.5vw;
+  pointer-events: auto;
+}
+
+.mobileBtn {
+  width: min(14vw, 64px);
+  height: min(14vw, 64px);
+  border-radius: 50%;
+  border: 2px solid var(--buttonborder);
+  background: var(--buttonbackground);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: min(7vw, 28px);
+  color: var(--text);
+  outline: none;
+  transition: transform .1s ease, opacity .2s ease;
+}
+
+.mobileBtn:active {
+  transform: scale(.95);
+}
+
+.shootBtn {
+  width: min(16vw, 68px);
+  height: min(16vw, 68px);
+}
+
+.superBtn {
+  width: min(16vw, 68px);
+  height: min(16vw, 68px);
+  border-color: var(--text);
+  box-shadow: 0 0 5vh var(--ki), inset 0 0 5vh var(--ki);
+  color: var(--text);
+  font-weight: bold;
+}
+
+.superBtn[disabled],
+.superBtn[aria-disabled="true"] {
+  opacity: .5;
+  filter: grayscale(60%);
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes entrada {
+  0% { opacity: 0; transform: translateY(100%); }
+  50% { opacity: 1; transform: translateY(-10%); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes entrada2 {
+  0% { opacity: 0; transform: translateY(10%); }
+  50% { opacity: 1; transform: translateY(-3%); }
+  100% { opacity: 1; transform: translateY(0%); }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0vw);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-1vw);
+  }
+}
+@keyframes floatAppearing {
+  0% {
+    transform: translateX(-50%) translateY(-50vw);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes pulse2 {
+  0% {
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6), 0 0 0 rgba(255, 0, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 0, 0, 1), 0 0 10px rgba(255, 0, 0, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6), 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
+
+@keyframes superReady {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes stunnedShake {
+  0%, 100% { filter: brightness(0.6) contrast(1.2) drop-shadow(0 0 2px red); }
+  20%, 60% { filter: brightness(10) contrast(1.5) drop-shadow(0 0 5px red); }
+  40%, 80% { filter: brightness(0) contrast(1.2) drop-shadow(0 0 2px red); }
+}
+
+@keyframes damageFlicker {
+  0% { opacity: 0.6; }
+  100% { opacity: 0.3; }
+}
+
+@keyframes shieldPulse {
+  0% {
+    box-shadow: 0 0 8px rgba(233, 36, 102, 0.6), 0 0 0 rgba(233, 36, 102, 0);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(233, 36, 102, 1), 0 0 5px rgba(233, 36, 102, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(233, 36, 102, 0.6), 0 0 0 rgba(233, 36, 102, 0);
+  }
+}
+
+@keyframes shieldHealthPulse {
+  0% {
+    border-color: #e92466;
+    box-shadow: 0 2px 8px rgba(233, 36, 102, 0.4);
+  }
+  50% {
+    border-color: #ff6b9d;
+    box-shadow: 0 2px 12px rgba(233, 36, 102, 0.8);
+  }
+  100% {
+    border-color: #e92466;
+    box-shadow: 0 2px 8px rgba(233, 36, 102, 0.4);
+  }
+}
+
+@keyframes playerTransitionGlow {
+  0% {
+    text-shadow: 0 0 20px #00ff00;
+    transform: scale(1);
+  }
+  100% {
+    text-shadow: 0 0 40px #00ff00, 0 0 60px #00ff00;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes countdownPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 30px rgba(255, 107, 53, 0.5); }
+  100% { box-shadow: 0 0 50px rgba(255, 107, 53, 0.8); }
+}
+
+@keyframes BardockMove {
+  0%, 100%{transform: translateX(-0.1vw) translateY(0.05VW)}
+  50%{transform: translateX(0) translateY(0)}
+}
+@keyframes appearUp {
+  0% {margin-top: -100vw;}
+  50% {margin-top: 13vw;}
+  100% {margin-top: 12vw;}
+}
+@keyframes appearDown {
+  0% {margin-bottom: -100vw;}
+  95% {margin-bottom: 0vw;}
+  100% {margin-bottom: -1vw;}
+}
+/* Responsive styles */
+@media (max-width: 425px) {
+  .skipVideoBtn {
+    font-size: 4vw;
+  }
+  
+  .pauseBtn {
+    font-size: 10vw;
+  }
+  
+  .menupause {
+    height: min-content;
+    max-height: fit-content;
+    justify-content: center;
+    align-items: center;
+    padding: 4vw;
+  }
+  
+  .menupause h2 {
+    font-size: 9vw;
+  }
+  
+  .menupause .pauseBtn {
+    width: 12vw;
+    padding: 3vw 1.5vw 3vw 1.5vw;
+    font-size: 5vw;
+    margin-top: 1vh;
+  }
+  
+  .menuButton {
+    padding: 1.5vw 1.5vw;
+    margin-bottom: 1vh;
+    margin-top: 0vh;
+    font-size: 3vw;
+  }
+  
+  .alienCounters {
+    flex-direction: column;
+  }
+  
+  .alienCounter {
+    padding: 2vw 3vw;
+    gap: 2vw;
+  }
+  
+  .alienIcon {
+    width: 10vw;
+    height: 2vh;
+  }
+  
+  .score {
+    width: 40vw;
+    height: 30vh;
+    font-size: 3vw;
+    top: -25vw;
+    backdrop-filter: none;
+  }
+  
+  .score span {
+    font-size: 6vw;
+  }
+  
+  .superBeam {
+    width: 20vw;
+    height: 20vw;
+  }
+  
+  .ship {
+    width: 100vw;
+  }
+  
+  .livesBar {
+    justify-self: center;
+    align-self: center;
+    position: absolute;
+    display: flex;
+    left: auto;
+    bottom: 1vw;
+  }
+  
+  .life {
+    width: 16vw;
+  }
+  
+  .controls {
+    display: none;
+  }
+  
+  .super {
+    display: none;
+  }
+  
+  .superStatus {
+    gap: 2vw;
+    font-size: 10vw;
+    display: none;
+  }
+  
+  .shieldHealthBar {
+    transform: translateY(-5vw);
+  }
+  
+  .powerUp {
+    width: 3vw;
+    height: 3vw;
+  }
+  
+  /* Invader scaling adjustments for mobile */
+  .invader {
+    filter: none !important;
+  }
+  
+  .invader.row0 {
+    transform: translateX(0%) translateY(-1vw) scale(4);
+  }
+  
+  .invader.row1 {
+    transform: scale(3.5) !important;
+  }
+  
+  .invader.row2 {
+    transform: scale(3) !important;
+  }
+  
+  .invader.row3 {
+    transform: scale(2.5) !important;
+  }
+  
+  .invader.row4 {
+    transform: scale(2) !important;
+  }
+  
+  .invader.row0.col0 {
+    transform: translateX(0%) translateY(-1vw) scale(2.5);
+  }
+  
+  .invader.row0.col1 {
+    transform: translateX(0%) translateY(-1vw) scale(5);
+  }
+  
+  .invader.row0.col2 {
+    transform: translateX(0%) translateY(-1vw) scale(4);
+  }
+  
+  .invader.row0.col3 {
+    transform: translateX(0%) translateY(-1vw) scale(4);
+  }
+  
+  .invader.row0.col4 {
+    transform: translateX(0%) translateY(-1vw) scale(5);
+  }
+}
+
+@media (min-width: 375px) and (max-width: 425px) {
+  .pauseBtn {
+    font-size: 8vw;
+  }
+  
+  .score {
+    width: 40vw;
+    height: 30vh;
+    font-size: 3vw;
+    top: -20vw;
+    backdrop-filter: none;
+  }
+}
+
+/* RESPONSIVE */
+/* RESPONSIVE */
+/* RESPONSIVE */
+/* RESPONSIVE */
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+    .gameArea{
+    height: 70vh !important;
+    top: -20vh !important;
+  }
+  .alienCounters {
+    display: none;
+  }
+  
+.gameMenu{
+  backdrop-filter: blur(0px);
+}
+
+  .BardockMenu{
+    width: 150vw;
+    height: 80vh;
+    justify-content: start;
+    align-items: center;
+    padding: 3vw;
+  }
+  .menuContainer{
+    perspective: 300px;
+  }
+  @keyframes appearUp {
+  0% {margin-top: -100vh;}
+  50% {margin-top: 13vh;}
+  100% {margin-top: 15vh;}
+}
+  .gameTitle{
+    font-size: 13vw !important;
+  }
+  .gameSubtitle{
+    width: 100vw;
+    float:none;
+    text-align: center;
+    line-height: 3vh;
+  }
+  .menuOptions{
+    width: 90vw;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    bottom: auto;
+    top: 40%;
+  }
+  .menuButton{
+    width: 80%;
+    padding: 2vw 3vh;
+    border-radius: 10vw;
+    margin: 1vw;
+    margin-bottom: 2vh;
+    margin-top: 2vh;
+    cursor: pointer;
+    font-size: 3vh !important;
+    transition: 0.3s ease-in-out;
+    font-weight: bold;
+  }
+  .expandedButton{
+    border-radius: 5vh !important;
+    padding: 3vh 5vh !important;
+      font-size: 2vh !important;
+  }
+  .nameSelectorContent.active{
+    max-height: 100vh;
+  }
+  .nameInput, .guestButton, .SelectButton{
+    font-size: 1em !important;
+    padding: 2vh 0vw;
+    width: 110% !important;
+  }
+  .actionButtons{
+    width: 110%;
+  }
+  .alienCounters {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 3vw;
+    top: 0.5vw;
+    left: 0.5vw;
+  }
+  
+  .alienCounter {
+    padding: 1vw 2vw;
+    gap: 2vw;
+  }
+  
+  .alienIcon {
+    width: 6vw;
+    height: 4vw;
+  }
+  
+  .alienCount {
+    font-size: 4vw;
+    min-width: 4vw;
+  }
+  
+  .score {
+    width: 50vw;
+    height: 30vh;
+    font-size: 1.5vh;
+    top: -16vw !important;
+    right: -10vw !important;
+    backdrop-filter: none;
+  }
+  
+  .score span {
+    font-size: 4vw;
+      text-shadow: 0 2px 0 var(--buttonbackground), 2px 0 0 var(--buttonbackground), 0 -2px 0 var(--buttonbackground), -2px 0 0 var(--buttonbackground) !important;
+  }
+  .shooter{
+    filter: none !important;
+    transform: scale(9) !important;
+  }
+  /* Tablet invader adjustments */
+  .invader.row0 {
+    transform: translateX(0%) translateY(-1.5vw) scale(5);
+  }
+  
+  .invader.row1 {
+    transform: scale(5) !important;
+  }
+  
+  .invader.row2 {
+    transform: scale(3) !important;
+  }
+  
+  .invader.row3 {
+    transform: scale(3.5) !important;
+  }
+  
+  .invader.row4 {
+    transform: scale(3) !important;
+  }
+  
+  .invader.row0.col1 {
+    transform: translateX(0%) translateY(-1.5vw) scale(7);
+  }
+  
+  .invader.row0.col4 {
+    transform: translateX(0%) translateY(-1.5vw) scale(7);
+  }
+  .boom{
+    width: 5vh !important;
+    height: 5vh !important;
+  }
+    .playerTurn{
+    left: auto;
+    bottom: 15vh;
+    justify-self: center;
+    align-self: center;
+    padding: 1vw 3vw;
+  }
+  .livesBar{
+    bottom: 10vh;
+    left: auto;
+    justify-self: center;
+    align-self: center;
+  }
+  .countdown{
+    font-size: 8vh !important;
+  }
+  .specialEnemy{
+    width: 12vh !important;
+    height: 12vh !important;
+  }
+  .powerUp{
+    width: 3vh !important;
+    height: 3vh !important;
+  }
+  .levelIndicatorPersist {
+  width: 100%;
+  }
+  .levelIndicatorPersist .levelText, .playerText {
+    font-size: 4vh !important;
+  }
+  .mobileControls{
+    bottom: 20vh;
+    max-width: 95%;
+    justify-content: space-between;
+  }
+
+  .mobileBtn{
+    font-size: 4vh !important;
+    border-radius: 50vh !important;
+    width: 4vh !important;
+    height: 10vh !important;
+  }
+  .laser, .enemyLaser{
+    width: 1vh !important;
+    height: 1vh !important;
+    box-shadow: none;
+    outline: 1vw solid var(--ki);
+  }
+  .enemyLaser{
+    outline: 1vw solid var(--redki) !important;
+  }
+  .superBeam{
+    width: 5vh !important;
+    height: 5vh !important;
+  }
+  .superVideo{
+    width: 90vw !important;
+    height: 30vh !important;
+    top: -10vh !important;
+  }
+  .transitionContent h2 {
+  font-size: 3vh;
+  max-width: 100%;
+  line-height: 4vh;
+  }
+  .transitionContent p {
+  font-size: 2vh;
+  margin: 0rem 0;
+  }
+  .continueText {
+    font-size: 2vh !important;
+    }
+  @keyframes fadeInOut {
+  0%, 100% {   text-shadow: -1px 0 0px black, 0 1px 0px black, 1px 0 0px black, 0 -1px 0px black !important; color: white !important}
+  50% {   text-shadow: -1px 0 0px white, 0 1px 0px white, 1px 0 0px white, 0 -1px 0px white !important; color: black !important;}
+}
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .alienCounters {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 3vw;
+    top: 0.5vw;
+    left: 0.5vw;
+  }
+  
+  .alienCounter {
+    padding: 1vw 2vw;
+    gap: 2vw;
+  }
+  
+  .alienIcon {
+    width: 4vw;
+    height: 2vw;
+  }
+  
+  .score {
+    width: 28vw;
+    height: 18vh;
+    font-size: 3vw;
+    top: -2vw;
+    backdrop-filter: none;
+  }
+  
+  .score span {
+    font-size: 4vw;
+  }
+  
+  .pauseBtn {
+    font-size: 6vw;
+  }
+  
+  .menupause {
+    width: 50vw;
+    height: 70vh;
+    justify-content: start;
+    align-items: center;
+    padding: 3vw;
+  }
+  
+  .menupause h2 {
+    font-size: 4vw;
+  }
+  
+  .menupause .pauseBtn {
+    width: 7vw;
+    padding: 2vw 1vw 2vw 1vw;
+    font-size: 2vw;
+    margin-top: 1vh;
+  }
+  
+  .menuButton {
+    width: 100%;
+    border: 1px solid var(--primary);
+    padding: 2vw 3vw;
+    border-radius: 10vw;
+    background: var(--background);
+    color: var(--text);
+    margin: 1vw;
+    margin-bottom: 2vh;
+    margin-top: 2vh;
+    cursor: pointer;
+    font-size: 2vh;
+    transition: 0.3s ease-in-out;
+    font-weight: bold;
+  }
+  
+  /* Small desktop invader adjustments */
+  .invader.row0 {
+    transform: translateX(0%) translateY(-2vw) scale(6);
+  }
+  
+  .invader.row1 {
+    transform: scale(5.5);
+  }
+  
+  .invader.row2 {
+    transform: scale(5);
+  }
+  
+  .invader.row3 {
+    transform: scale(4.5);
+  }
+  
+  .invader.row4 {
+    transform: scale(4);
+  }
+  
+  .invader.row0.col1 {
+    transform: translateX(0%) translateY(-2vw) scale(8);
+  }
+  
+  .invader.row0.col4 {
+    transform: translateX(0%) translateY(-2vw) scale(8);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .skipVideoBtn {
+    font-size: 2vw;
+  }
+  
+  .pauseBtn {
+    font-size: 8vw;
+  }
+  
+  .menupause {
+    width: 50vw;
+    height: 70vh;
+    justify-content: start;
+    align-items: center;
+    padding: 3vw;
+  }
+  
+  .menupause h2 {
+    font-size: 4.5vw;
+  }
+  
+  .menupause .pauseBtn {
+    width: 7vw;
+    padding: 2vw 1vw 2vw 1vw;
+    font-size: 3vw;
+    margin-top: 1vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .gameArea {
+    width: 80%;
+    height: 85%;
+  }
+  
+  .controls {
+    font-size: 2.5vw;
+    bottom: 0.5vw;
+  }
+  
+  .controls p {
+    margin: 0;
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 320px) {
+  .score {
+    width: 28vw;
+    height: 18vh;
+    font-size: 3vw;
+    top: -2vw;
+    backdrop-filter: none;
+  }
+  
+  .score span {
+    font-size: 4vw;
+  }
+  
+  .super {
+    right: 2vw;
+    bottom: 2vw;
+  }
+  
+  .superOrb {
+    width: 8vw;
+    height: 8vw;
+  }
+  
+  .superStatus {
+    font-size: 2vw;
+  }
+  
+  .livesBar {
+    bottom: 2vw;
+    left: 0.5vw;
+    padding: 1vw 2vw;
+  }
+  
+  .life {
+    width: 10vw;
+    height: 8px;
+  }
+}
+
+/* Hide mobile controls on desktop */
+@media (min-width: 1025px) {
+  .mobileControls {
+    display: none;
+  }
+}
+
+/* Menu responsive */
+@media (max-width: 768px) {
+  .menuContainer {
+    padding: 30px 20px;
+    margin: 20px;
+  }
+  
+  .gameTitle {
+    font-size: 2rem;
+  }
+  
+  .gameSubtitle {
+    font-size: 1rem;
+  }
+  
+  .menuButton {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+}

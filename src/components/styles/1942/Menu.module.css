@@ -1,0 +1,478 @@
+
+/* Menu styles - Estilo original de 1942 con botones interactivos */
+:root {
+  --primary: #00ff00;
+  --background: #0d0f13;
+  --text: #e9fffd;
+  --ki: #a3cbff;
+  --redki: #ff5983;
+  --scouterNum: #ffff97;
+  --scoutershine: #ffff00;
+  --buttonbackground: #0000004d;
+  --buttonborder: #ffffff33;
+  --logo: #ebac33;
+  --title: #ff0055cb;
+}
+
+.Contenedor{
+  background: url(../../../assets/1942/MenuBackground.webp);
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/MenuBackground.avif');
+  }
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  color: white;
+}
+
+.gameMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.226);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  perspective: 1000px;
+}
+
+.GokuMenu{
+  width: 45vw;
+  height: 100%;
+  background: url(../../../assets/1942/GokuMenu.webp) center / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/1942/GokuMenu.avif');
+  }
+  position: absolute;
+  margin: 0 auto;
+  bottom: 0;
+  right: 0;
+  z-index: 3;
+  will-change: transform, filter;
+  transform: translateZ(0) translateX(100vw); /* truco para forzar capa GPU */
+  animation: 
+  /* auraGlowBardock 1s infinite linear, */
+  BardockMove 0.2s infinite linear,
+  appearRight 2s forwards;
+}
+.menuContainer {
+  text-align: center;
+  width: max-content;
+  height: 100%;
+  width: 100vw;
+  border-radius: 15px;
+  align-items: end;
+  justify-content: end;
+  perspective: 1000px;
+}
+.Titles{
+  transform-style: preserve-3d;
+    transform: rotateY(20deg);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-top: 4vw;
+  width: 70%;
+  position: absolute;
+}
+.gameTitle {
+  text-align: end;
+  width: 100%;
+  font-size: 14vw;
+  font-weight: bolder;
+  color: rgba(255, 0, 85, 0.795);
+  line-height: 5vw;
+  font-family: "Press Start 2P", system-ui;
+    font-weight: bolder;
+    letter-spacing: -1vw;
+  display: grid;
+  flex-direction: column;
+  gap: 7vw;
+  opacity: 0;
+  cursor: default;
+ will-change: transform, filter;
+  transform: translateZ(0) translateX(100vw); /* truco para forzar capa GPU */
+  animation: appearRight 2s forwards 0.2s;
+}
+.gameSubtitle {
+  font-size: 1.3rem;
+  color: #ffd700;
+  font-family: "Press Start 2P", system-ui;
+  width: fit-content;
+  align-self:self-end;
+  line-height: 4vw;
+  cursor: default;
+  width: 100%;
+  opacity: 0;
+ will-change: transform, filter;
+  transform: translateZ(0) translateX(100vw); /* truco para forzar capa GPU */
+  animation: appearRight 2s forwards 0.4s;
+}
+.menuOptions {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4vw;
+  position: absolute;
+  bottom: 4vw;
+  width: 30%;
+  height: 30%;
+  left: 17%;
+  align-self: center;
+  justify-content: space-around;
+  z-index: 20;
+  gap: 1vw;
+}
+
+/* ===== BOTONES INTERACTIVOS (mantenidos del PPT) ===== */
+.menuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0.5vw 2vw;
+  font-size: 1.5vw;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.479);
+  color: white;
+  border-radius: 10vw;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid var(--buttonborder);
+  z-index: 10;
+  backdrop-filter: blur(6px);
+  flex-direction: row;
+  white-space: nowrap;
+  will-change: transform;
+  transform: scale(1);
+  transform-origin: center bottom;
+  z-index: 10000 !important;
+  transition: 0.5s ease-in-out !important; 
+  font-family: Arial;
+}
+
+.menuButton:hover {
+  color: var(--text);
+  transform: translateY(-3px) scale(1);
+  border-color: var(--text);
+  box-shadow: 0 0 20px var(--ki), inset 0 0 30px var(--ki) !important;
+}
+
+.menuButton:active {
+  transform: translateY(-1px) scale(1);
+}
+
+.expandedButton {
+  background: var(--buttonbackground) !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+  border-radius: 2vw !important;
+  display: flex;
+  padding: 2vw 2vw;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  position: relative;
+  min-height: 11vw; /* Mantener altura mínima */
+  transition: 0.4s ease-in-out !important;
+}
+
+.nameSelectorContent { 
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-self: center; 
+  max-height: 0;
+  width: 100%;
+  opacity: 0;
+  max-width: 0;
+  transform: scale(0.2);
+  overflow: visible;
+  visibility: hidden;
+  transition: max-height 0.1s ease-in-out, opacity 0s ease-in-out, transform 0.1s ease-in-out, visibility 0s linear 0.4s, max-width 0s ease-in-out !important;
+}
+
+.nameSelectorContent.active {
+  opacity: 1;
+  max-height: 500px; /* Valor suficientemente grande para el contenido */
+  width: 100%;
+  max-width: 100%;
+  transform: scale(1);
+  visibility: visible;
+  transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out, transform 0.4s ease-in-out, visibility 0.4s linear !important;
+  transition-delay: 0s !important;
+}
+
+.nameSelectorContent > * {
+  border-radius: 10vw; 
+}
+
+.SelectButton {
+  background: var(--buttonbackground);
+  backdrop-filter: blur(5px);
+  border: 2px solid var(--buttonborder);
+  color: var(--text);
+  font-size: 0.8vw !important;
+  border-radius: 10vw;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out !important;  
+  font-family: "Press Start 2P", system-ui !important;
+  letter-spacing: -2px;
+  padding: 0.7em 0;
+}
+
+.SelectButton:hover {
+  background: var(--text);
+  color: var(--background);
+  box-shadow: 0px 20px 20px var(--text);
+  border: 2px solid var(--text);
+  transform: translateY(-5px);
+}
+
+.nameInput { 
+  font-size: 1em; 
+  margin-bottom: 1vw; 
+  text-align: center; 
+  resize: none; 
+  min-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  height: auto;
+  min-height: auto;
+  line-height: 1.2;
+}
+
+.guestButton { 
+  font-weight: bold; 
+  margin-bottom: 1vw; 
+  font-size: 1em; 
+  cursor: pointer; 
+  transition: background 0.2s; 
+}
+
+.actionButtons { 
+  display: flex; 
+  flex-direction: row; 
+  gap: 1vw; 
+  width: 100%; 
+  margin-bottom: 0.7vw; 
+}
+
+.playButton { 
+  font-weight: bold; 
+  font-size: 1.1em; 
+  cursor: pointer; 
+  flex: 1; 
+  transition: background 0.2s; 
+  background: var(--text) !important;
+  color: var(--buttonbackground) !important;
+  text-shadow: 0 0 1px var(--background);
+  box-shadow: 0px 5px 20px var(--text) !important;
+  border: 2px solid var(--text) !important;
+}
+
+.playButton:disabled { 
+  opacity: 0.5;
+  cursor: not-allowed; 
+  background: var(--buttonbackground) !important;
+  color: var(--text) !important;
+  box-shadow: none !important; 
+  border-color: var(--buttonborder) !important;
+  transition: opacity 0.3s ease-in-out !important;
+}
+
+.playButton:disabled:hover { 
+  opacity: 0.2;
+  transform: translate(0, 0);
+}
+
+.playButton:hover:not(:disabled) { 
+  background: var(--text) !important;
+  color: var(--background) !important;
+  box-shadow: 0px 5px 20px var(--text) !important;
+  border: 2px solid var(--text) !important;
+}
+
+.exitButton { 
+  font-weight: bold; 
+  font-size: 1.1em; 
+  cursor: pointer; 
+  flex: 1; 
+  transition: background 0.2s; 
+}
+
+.errorMsg { 
+  color: var(--text);
+  font-size: 1vw;
+  position: absolute;
+  margin-top: -3vw; 
+  text-shadow: 2px 0 0 black, 0 2px 0 black, -2px 0 0 black, 0 -2px 0 black;
+  text-align: center;
+  font-family: "Press Start 2P", system-ui !important;
+  letter-spacing: -2px; 
+}
+
+.menuControls {
+  position: absolute;
+  justify-self: center;
+  z-index: 10;
+  bottom: 1vw;
+  font-size: 1vw;
+  color: var(--text);
+  text-shadow: 0 2px 5px black;
+  line-height: 0;
+  z-index: 20;
+  width: 100%;;
+  cursor: default;
+}
+
+.menuControls p:first-child {
+  font-weight: bold;
+  color: #ffd700;
+  z-index: 20;
+  margin-left: -1.5vw;
+}
+
+.menuButton:hover .playersIcon{
+    filter: drop-shadow(0 0 4px white);
+}
+
+.playersIcon{
+    width: 3em;
+    height: 3em;
+    filter: drop-shadow(0 0 4px black);
+    transition: 0.3s ease-in-out;
+}
+
+.player2Icon{
+  background: url(../../../assets/Player2Coop.png) center / 140% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/Player2Coop.avif');
+  }
+}
+
+.player1Icon{
+  background: url(../../../assets/Player1.png) center / 140% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/Player1.avif');
+  }
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/Player1.avif');
+  }
+}
+
+@keyframes auraGlowBardock {
+  0% {
+    filter: drop-shadow(0.5vw -0.3vw 0.8vw rgba(245,221,63,0.35))
+            drop-shadow(-0.4vw -1vw 2vw rgba(255,102,204,0.25))
+            drop-shadow(0.2vw -0.7vw 3vw rgba(255,214,163,0.2))
+            drop-shadow(-0.6vw -0.5vw 1.2vw rgba(102,255,204,0.15))
+            drop-shadow(0.7vw -0.8vw 2.5vw rgba(153,102,255,0.15))
+            drop-shadow(-0.5vw -0.9vw 3vw rgba(255,153,204,0.2));
+  }
+  10% {
+    filter: drop-shadow(-0.7vw -0.6vw 1.5vw rgba(255,184,77,0.4))
+            drop-shadow(0.6vw -1.3vw 2.8vw rgba(255,102,77,0.3))
+            drop-shadow(-0.3vw -0.9vw 3.2vw rgba(255,226,204,0.25))
+            drop-shadow(0.8vw -0.6vw 1.3vw rgba(102,255,179,0.2))
+            drop-shadow(-0.6vw -0.8vw 2vw rgba(255,179,102,0.15))
+            drop-shadow(0.5vw -1vw 2.7vw rgba(255,229,153,0.2));
+  }
+  25% {
+    filter: drop-shadow(0.8vw -0.4vw 0.9vw rgba(255,153,77,0.3))
+            drop-shadow(-0.5vw -1.1vw 2.5vw rgba(255,204,102,0.25))
+            drop-shadow(0.4vw -1vw 3.5vw rgba(255,229,179,0.2))
+            drop-shadow(-0.7vw -0.8vw 1.5vw rgba(77,255,204,0.15))
+            drop-shadow(0.9vw -0.6vw 1.6vw rgba(255,102,153,0.2))
+            drop-shadow(-0.4vw -1.2vw 2.8vw rgba(255,235,214,0.15));
+  }
+  40% {
+    filter: drop-shadow(-0.6vw -0.5vw 1.3vw rgba(226,173,93,0.35))
+            drop-shadow(0.7vw -1.2vw 2.6vw rgba(255,193,133,0.25))
+            drop-shadow(-0.5vw -1vw 3.8vw rgba(255,128,102,0.2))
+            drop-shadow(0.6vw -0.7vw 1.4vw rgba(102,255,204,0.15))
+            drop-shadow(-0.8vw -0.9vw 2.2vw rgba(255,153,51,0.2))
+            drop-shadow(0.5vw -1vw 3vw rgba(255,102,102,0.15));
+  }
+  55% {
+    filter: drop-shadow(0.9vw -0.3vw 1vw rgba(245,221,63,0.35))
+            drop-shadow(-0.6vw -1vw 2.2vw rgba(255,204,102,0.3))
+            drop-shadow(0.3vw -0.8vw 3.5vw rgba(255,204,153,0.25))
+            drop-shadow(-0.7vw -0.5vw 1.5vw rgba(102,255,204,0.2))
+            drop-shadow(0.8vw -0.7vw 1.8vw rgba(255,102,179,0.15))
+            drop-shadow(-0.5vw -1vw 3vw rgba(255,229,102,0.2));
+  }
+  70% {
+    filter: drop-shadow(-0.8vw -0.6vw 1.6vw rgba(255,184,77,0.35))
+            drop-shadow(0.9vw -1.1vw 2.7vw rgba(255,153,102,0.25))
+            drop-shadow(-0.4vw -1vw 3.6vw rgba(255,235,204,0.2))
+            drop-shadow(0.7vw -0.8vw 1.5vw rgba(102,255,179,0.15))
+            drop-shadow(-0.6vw -0.9vw 2vw rgba(255,204,102,0.15))
+            drop-shadow(0.6vw -1vw 2.5vw rgba(255,102,102,0.2));
+  }
+  85% {
+    filter: drop-shadow(0.5vw -0.5vw 1vw rgba(255,193,51,0.3))
+            drop-shadow(-0.7vw -1.2vw 2.5vw rgba(255,204,102,0.25))
+            drop-shadow(0.6vw -1vw 3.8vw rgba(255,128,128,0.2))
+            drop-shadow(-0.5vw -0.7vw 1.4vw rgba(77,255,204,0.15))
+            drop-shadow(0.9vw -0.6vw 1.5vw rgba(255,102,77,0.2))
+            drop-shadow(-0.6vw -1.1vw 3vw rgba(255,235,214,0.15));
+  }
+  100% {
+    filter: drop-shadow(0.5vw -0.3vw 0.8vw rgba(245,221,63,0.35))
+            drop-shadow(-0.4vw -1vw 2vw rgba(255,102,204,0.25))
+            drop-shadow(0.2vw -0.7vw 3vw rgba(255,214,163,0.2))
+            drop-shadow(-0.6vw -0.5vw 1.2vw rgba(102,255,204,0.15))
+            drop-shadow(0.7vw -0.8vw 2.5vw rgba(153,102,255,0.15))
+            drop-shadow(-0.5vw -0.9vw 3vw rgba(255,153,204,0.2));
+  }
+}
+
+@keyframes BardockMove {
+  0%, 100%{transform: translateX(-0.1vw) translateY(0.05VW)}
+  50%{transform: translateX(0) translateY(0)}
+}
+@keyframes appearUp {
+  0% {margin-top: -100vw;}
+  50% {margin-top: 13vw;}
+  100% {margin-top: 12vw;}
+}
+@keyframes appearRight {
+  0% {transform: translateX(100vw); opacity: 0}
+  80% {transform: translateX(0vw); opacity: 1;}
+  100% {transform: translateX(1vw); opacity: 1;}
+}
+
+.player2Icon {
+  background: url(../../../assets/Player2Vs.png) center / 140% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../../assets/Player2Vs.avif');
+  }
+}
+
+.player1Icon {
+  background: url(../../../assets/Player1.png) center / 140% no-repeat;
+}
+
+/* ===== ANIMACIONES ORIGINALES DE 1942 ===== */
+@keyframes BardockMove {
+  0%, 100%{transform: translateX(-0.1vw) translateY(0.05VW)}
+  50%{transform: translateX(0) translateY(0)}
+}
+@keyframes appearUp {
+  0% {margin-top: -100vw;}
+  50% {margin-top: 13vw;}
+  100% {margin-top: 12vw;}
+}
+@keyframes appearRight {
+  0% {transform: translateX(100vw); opacity: 0}
+  80% {transform: translateX(0vw); opacity: 1;}
+  100% {transform: translateX(1vw); opacity: 1;}
+}

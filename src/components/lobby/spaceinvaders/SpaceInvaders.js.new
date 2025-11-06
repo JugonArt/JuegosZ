@@ -1,0 +1,104 @@
+// Import section remains the same
+
+const SpaceInvaders = ({onSaveScoreSpaceInvaders, getTopScores, onBack}) => {
+  // ... Keep existing state declarations ...
+  
+  // Add music effects and handlers
+  const handleVolumeChange = useCallback((newVolume) => {
+    setVolume(newVolume);
+    // Only update volume if music isn't muted
+    if (!musicMuted) {
+      try {
+        bgm.setVolume(newVolume);
+      } catch (e) {
+        console.warn('[BGM] Volume update failed:', e);
+      }
+    }
+  }, [musicMuted]);
+
+  const handleToggleMusic = useCallback(() => {
+    setMusicMuted(prev => {
+      const newMuted = !prev;
+      try {
+        if (newMuted) {
+          bgm.pause();
+        } else {
+          bgm.resume();
+          bgm.setVolume(volume);
+        }
+      } catch (e) {
+        console.warn('[BGM] Toggle music failed:', e);
+      }
+      return newMuted;
+    });
+  }, [volume]);
+
+  // Initialize BGM when game mounts
+  useEffect(() => {
+    try {
+      bgm.init();
+      bgm.setVolume(volume);
+      if (gameState === 'playing' && !musicMuted) {
+        bgm.play();
+      }
+    } catch (e) {
+      console.warn('[BGM] Init error:', e);
+    }
+    return () => {
+      try {
+        bgm.stop();
+      } catch (e) {}
+    };
+  }, []);
+
+  // Manage BGM based on game state
+  useEffect(() => {
+    try {
+      if (!mountGame || musicMuted) return;
+
+      if (gameState === 'playing' && !showPauseMenu) {
+        bgm.play();
+      } else if (gameState === 'gameOver' || gameState === 'win') {
+        bgm.stop();
+      }
+    } catch (e) {
+      console.warn('[BGM] State update failed:', e);
+    }
+  }, [gameState, showPauseMenu, mountGame, musicMuted]);
+
+  // Sync volume changes with BGM
+  useEffect(() => {
+    if (!musicMuted) {
+      try {
+        bgm.setVolume(volume);
+      } catch (e) {
+        console.warn('[BGM] Volume sync failed:', e);
+      }
+    }
+  }, [volume, musicMuted]);
+
+  // Rest of the component implementation remains the same
+  // ... 
+
+  return (
+    <div className={styles.container}>
+      {/* ... Other JSX ... */}
+
+      <PauseMenu
+        showPauseMenu={showPauseMenu}
+        onRequestClose={togglePauseMenu}
+        onResetGame={resetCurrentGame}
+        onTogglePause={togglePauseMenu}
+        onBack={onBack}
+        volume={volume}
+        onVolumeChange={handleVolumeChange}
+        musicMuted={musicMuted}
+        onToggleMusic={handleToggleMusic}
+      />
+
+      {/* ... Rest of JSX ... */}
+    </div>
+  );
+};
+
+export default SpaceInvaders;

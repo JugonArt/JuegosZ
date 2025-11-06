@@ -1,0 +1,6 @@
+{
+  "appId": "com.tuempresa.juegosz",
+  "appName": "JuegosZ",
+  "webDir": "public",
+  "bundledWebRuntime": false
+}

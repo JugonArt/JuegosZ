@@ -1,0 +1,60 @@
+/* Estilos específicos para SinglePlayerGameOver */
+
+/* Importar estilos base */
+@import './GameOverBase.module.css';
+
+/* Container específico para single player */
+.singlePlayerContent {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Información de score para single player */
+.scoreInfo {
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 2vw;
+  padding: 1rem;
+  color: var(--text);
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.scoreInfo.lose {
+  background: rgba(255, 68, 68, 0.1);
+  border-color: rgba(255, 68, 68, 0.3);
+}
+
+.scoreValue {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffd700;
+  margin: 0.5rem 0;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  font-family: var(--pixelfont)
+}
+
+/* Animaciones específicas para single player */
+.singlePlayerContent .gameOverTitle {
+  animation: titlePulse 2s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Responsive para single player */
+@media (max-width: 768px) {
+  .singlePlayerContent {
+    max-width: 100%;
+  }
+  
+  .scoreValue {
+    font-size: 1.5rem;
+  }
+}

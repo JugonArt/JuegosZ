@@ -1,0 +1,369 @@
+.lobby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+  padding: 20px;
+  user-select: none;
+  background: url(../../assets/BackgroundManga.jpg) center / cover no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/BackgroundManga.avif');
+  }
+}
+.header{
+  position: absolute;
+  top: 0;
+  filter: opacity(1);
+  z-index: 100;
+  display: flex;
+  width: 30%;
+  height: 5vw;
+  flex-direction: row;
+  background: url(../../assets/dash.png) center / 0.7% repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/dash.avif');
+  }
+  backdrop-filter: blur(3px);
+  padding: 0vw 3vw;
+  border: 3px solid rgb(0, 0, 0);
+  border-top: none;
+  border-radius: 0 0 3vw 3vw;
+  overflow: hidden;
+  align-self: center;
+  justify-content: center;
+  align-items: center;
+}
+.shorts {
+  display: flex;
+  flex-direction: row;
+  gap: 1vw; /* un poco más de espacio para que no se vea apretado */
+  justify-content: center;
+  align-items: center; /* centra verticalmente iconos y texto */
+  position: absolute;
+  right: 25%;
+  height: auto;
+  width: fit-content;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.shorts > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5vw; /* espacio entre icono y texto */
+}
+
+.shortcuts {
+  text-transform: uppercase;
+  font-family: "Press Start 2P", system-ui;
+  letter-spacing: 1px;
+  font-size: 1vw;
+  transition: 0.1s ease-in-out;
+}
+.gap {
+  height: 2vw; /* un poco más alto para que coincida con iconos */
+  width: 3px;
+  background: black;
+}
+.Icon{ width: 2vw; height: 2vw; justify-self: center; align-self: center; margin-top: -1vw; 
+  transition: 0.1s ease-in-out;
+}
+.Icon.home{
+  -webkit-mask: url(../../assets/home.png) center / contain no-repeat;
+  mask: url(../../assets/home.png) center / contain no-repeat;
+  background: black !important;
+}
+.Icon.score{
+  -webkit-mask: url(../../assets/videos.png) center / contain no-repeat;
+  mask: url(../../assets/videos.png) center / contain no-repeat;
+  background: black !important;
+}
+.boton{
+  position: relative;
+  height: 2vw;
+  justify-self: center;
+  align-self: center;
+  margin: 0 auto;
+  background: none;
+  border: none;
+  display: flex;
+  gap: 1vw;
+  transition: 0.2s ease-in-out;
+}
+.boton::after {
+  content: "";
+  position: absolute;
+  bottom: 0;      /* alineado abajo */
+  left: 0;
+  height: 4px;    /* grosor de la línea */
+  width: 0%;      /* empieza oculta */
+  background: black;
+  justify-self: center;
+  align-self: center;
+  transition: width 0.3s ease;
+  border-radius: 10vw;
+}
+.boton .shortcuts{
+    z-index: 100;
+    color: black ;
+    margin-top: 0.4vw;
+}
+.boton:hover{
+  transform: translateY(-4px);
+}
+
+.active .shortcuts{
+  color: #fab20e !important;
+  text-shadow:
+    -2px -2px 0 black,  
+     2px -2px 0 black,
+    -2px  2px 0 black,
+     2px  2px 0 black;
+}
+
+.boton.active::after {
+  width: 100%;    /* se expande con animación */
+}
+.active:hover{
+  cursor: no-drop;
+}
+.icon{
+  position: absolute;
+  top: 5%;
+  z-index: 100 !important;
+  width: 100% ;
+  height: 7vw;
+  left: 0;
+  justify-self: center !important;
+  background: url(../../assets/GokuHeader.png) right / contain no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/GokuHeader.avif');
+  }
+}
+.header:hover .icon{
+  animation: jump 0.6s ease-out forwards;
+}
+
+@keyframes jump {
+  0%   { transform: translateY(0); }
+  40%  { transform: translateY(-4%); }  /* punto máximo del salto */
+  60%  { transform: translateY(0); }     /* vuelve a la base */
+  75%  { transform: translateY(-2%); }   /* pequeño rebote */
+  100% { transform: translateY(0); }     /* descansa en la posición inicial */
+}
+.players1, .players2COOP, .players2VS{
+  background: url(../../assets/Player1.png) center / 150% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/Player1.avif');
+  }
+  width: 5vw;
+  height: 5vw;
+  z-index: 50;
+  cursor: help;
+}
+.players1 p, .players2COOP p, .players2VS p{
+  position: absolute;
+  justify-self: center;
+  width: max-content;
+  margin-top: 0vw;
+  text-transform: capitalize;
+  padding: 0.2vw 0.5vw;
+  border-radius: 10vw;
+  background: var(--text);
+  color: var(--background);
+  border: 2px solid var(--background);
+  text-shadow: none;
+  transform: scale(0);
+  opacity: 0;
+  transition: 0.2s ease-in-out;
+  z-index: 400;
+}
+.players1:hover p, .players2VS:hover p, .players2COOP:hover p{
+  transform: scale(1);
+  margin-top: -2vw;
+  opacity: 1;
+}
+.players2VS{
+  background: url(../../assets/Player2Vs.png) center / 150% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/Player2Vs.avif');
+  }
+}
+.players2COOP{
+  background: url(../../assets/Player2Coop.png) center / 150% no-repeat;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/Player2Coop.avif');
+  }
+}
+.noplayers{
+  background: none;
+}
+.noplayers p{
+  display: none;
+}
+.circle{
+  backdrop-filter: blur(3px);
+  background: linear-gradient(0deg, #ffffff17 80%, #00000044);
+  width: 90vw;
+  height: 50vw;
+  position: absolute;
+  border-radius: 100%;
+  margin-bottom: -80vw;
+}
+
+.entry {
+  animation: fadeInUp 1s ease forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
+  transform: translateY(100vw);
+}
+.entryTop {
+  animation: fadeInDown 1s ease forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
+}
+@keyframes fadeInDown {
+  0% {transform: translateY(-2vw); opacity: 0;}
+  100% {opacity: 1; transform: translateY(0vw);}
+}
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 1024px) {
+ .header{
+    height: 8vh;
+    width: 60vw;
+    border-radius: 0 0 4vh 4vh;
+  }
+  .header .shorts{
+    width: 75%;
+    right: 20%;
+    gap: 0vw;
+  }
+  .header .shortcuts{
+  font-size: 2vw;
+  align-self: end;
+  justify-self: end;
+  margin-top: 3vh;
+  }
+  .header .Icon{
+    width: 5vw;
+    height: 5vw;
+  }
+  .header .boton{
+    height: max-content;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
+  }
+  .boton.active::after {
+  width: 90%;
+  right: 0;  
+}
+.boton::after{
+  bottom: 20%;
+  height: 2px;    /* grosor de la línea */
+  right: 0;  
+}
+  .header .icon{
+    height: 20vh;
+    top: -4vh;
+  }
+  .header .gap{
+    display: none !important;
+  }
+  .active .shortcuts{
+  text-shadow:
+    -1px -1px 0 black,  
+     1px -1px 0 black,
+    -1px  1px 0 black,
+     1px  1px 0 black;
+  }
+.circle{
+  width: 90vw;
+  height: 80vh;
+  margin-bottom: -120%;
+}
+  .players1, .players2COOP, .players2VS{
+  width: 8vh;
+  height: 8vh;  
+}
+.players1 p, .players2COOP p, .players2VS p{
+  padding: 1vw 2vw;
+}
+.players1:hover p, .players2VS:hover p, .players2COOP:hover p{
+    margin-top: -4vh;
+  }
+}
+@media (max-width: 768px) {
+  .header{
+    height: 10vh;
+    width: 80vw;
+    border-radius: 0 0 4vh 4vh;
+  }
+  .header .shorts{
+    width: 75%;
+    right: 20%;
+    gap: 0vw;
+  }
+  .header .shortcuts{
+  font-size: 3vw;
+  align-self: end;
+  justify-self: end;
+  margin-top: 2vh;
+  }
+  .header .Icon{
+    width: 7vw;
+    height: 7vw;
+  }
+  .header .boton{
+    height: max-content;
+    top: -1vh;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding-bottom: 0.5vh;
+    justify-content: center;
+  }
+.boton::after{
+  bottom: 10%;
+  height: 2px;    /* grosor de la línea */
+}
+  .header .icon{
+    height: 20vh;
+    top: -2vh;
+  }
+  .header .gap{
+    display: none !important;
+  }
+  .active .shortcuts{
+  text-shadow:
+    -1px -1px 0 black,  
+     1px -1px 0 black,
+    -1px  1px 0 black,
+     1px  1px 0 black;
+  }
+  .circle{
+    width: 100vw;
+    height: 50vh;
+    margin-bottom: -90vh;
+  background: linear-gradient(0deg, #ffffff17 50%, #00000044);
+  }
+  .players1, .players2COOP, .players2VS{
+  width: 10vh;
+  height: 10vh;  
+}
+.players1 p, .players2COOP p, .players2VS p{
+  padding: 1vw 2vw;
+}
+.players1:hover p, .players2VS:hover p, .players2COOP:hover p{
+    margin-top: -4vh;
+  }
+}
+@media (max-width: 480px) {
+}

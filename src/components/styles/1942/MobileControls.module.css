@@ -1,0 +1,362 @@
+/* MobileControls.css - Estilos para controles táctiles */
+
+.mobile-controls {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Solo mostrar en dispositivos móviles */
+.mobile-controls {
+  display: none;
+}
+
+@media (max-width: 768px) and (pointer: coarse) {
+  .mobile-controls {
+    display: block;
+  }
+}
+
+/* Controles de movimiento - lado izquierdo */
+.movement-controls {
+  position: absolute;
+  left: 2vw;
+  bottom: 10vh;
+  pointer-events: auto;
+}
+
+.d-pad {
+  position: relative;
+  width: 20vw;
+  height: 20vw;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 2px;
+}
+
+.d-pad-btn {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+  border: 2px solid var(--primary);
+  border-radius: 15px;
+  color: var(--text);
+  font-size: 6vw;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.d-pad-btn:active,
+.d-pad-btn.active {
+  background: linear-gradient(135deg, var(--primary), rgba(0, 255, 0, 0.8));
+  color: var(--background);
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 255, 0, 0.3);
+}
+
+.d-pad-btn.up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.d-pad-middle {
+  grid-column: 1/4;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.d-pad-btn.left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.d-pad-btn.right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.d-pad-center {
+  width: 6vw;
+  height: 6vw;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  margin: 0 1vw;
+}
+
+.d-pad-btn.down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+/* Controles de acción - lado derecho */
+.action-controls {
+  position: absolute;
+  right: 2vw;
+  bottom: 10vh;
+  display: flex;
+  flex-direction: column;
+  gap: 3vw;
+  pointer-events: auto;
+}
+
+.action-btn {
+  width: 18vw;
+  height: 18vw;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.action-btn:active,
+.action-btn.active {
+  background: linear-gradient(135deg, var(--primary), rgba(0, 255, 0, 0.8));
+  color: var(--background);
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 255, 0, 0.3);
+}
+
+.btn-icon {
+  font-size: 8vw;
+  margin-bottom: 1vw;
+}
+
+.btn-label {
+  font-size: 3vw;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Botón especial para disparo */
+.shoot-btn {
+  border-color: var(--redki);
+  background: linear-gradient(135deg, rgba(255, 89, 131, 0.3), rgba(0, 0, 0, 0.8));
+}
+
+.shoot-btn:active,
+.shoot-btn.active {
+  background: linear-gradient(135deg, var(--redki), rgba(255, 89, 131, 0.8));
+  box-shadow: 0 2px 8px rgba(255, 89, 131, 0.3);
+}
+
+/* Botón especial para loop */
+.loop-btn {
+  border-color: var(--ki);
+  background: linear-gradient(135deg, rgba(163, 203, 255, 0.3), rgba(0, 0, 0, 0.8));
+}
+
+.loop-btn:active,
+.loop-btn.active {
+  background: linear-gradient(135deg, var(--ki), rgba(163, 203, 255, 0.8));
+  box-shadow: 0 2px 8px rgba(163, 203, 255, 0.3);
+}
+
+/* Botón de pausa flotante */
+.mobile-pause-btn {
+  position: absolute;
+  top: 2vh;
+  right: 2vw;
+  width: 12vw;
+  height: 12vw;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7));
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+  color: var(--text);
+  font-size: 6vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-pause-btn:active {
+  background: linear-gradient(135deg, var(--primary), rgba(0, 255, 0, 0.8));
+  transform: scale(0.95);
+}
+
+/* Animaciones y efectos */
+@keyframes buttonPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.d-pad-btn:active,
+.action-btn:active {
+  animation: buttonPulse 0.1s ease;
+}
+
+/* Mejoras para tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .d-pad {
+    width: 15vw;
+    height: 15vw;
+  }
+  
+  .d-pad-btn {
+    font-size: 4vw;
+    border-radius: 12px;
+  }
+  
+  .action-btn {
+    width: 14vw;
+    height: 14vw;
+  }
+  
+  .btn-icon {
+    font-size: 6vw;
+  }
+  
+  .btn-label {
+    font-size: 2.5vw;
+  }
+  
+  .mobile-pause-btn {
+    width: 10vw;
+    height: 10vw;
+    font-size: 5vw;
+  }
+  
+  .d-pad-center {
+    width: 4vw;
+    height: 4vw;
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .movement-controls {
+    bottom: 8vh;
+  }
+  
+  .action-controls {
+    bottom: 8vh;
+  }
+  
+  .d-pad {
+    width: 22vw;
+    height: 22vw;
+  }
+  
+  .action-btn {
+    width: 20vw;
+    height: 20vw;
+    gap: 2vw;
+  }
+  
+  .btn-icon {
+    font-size: 9vw;
+  }
+  
+  .btn-label {
+    font-size: 3.5vw;
+  }
+}
+
+/* Orientación landscape en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+  .movement-controls {
+    left: 1vw;
+    bottom: 15vh;
+  }
+  
+  .action-controls {
+    right: 1vw;
+    bottom: 15vh;
+  }
+  
+  .d-pad {
+    width: 15vh;
+    height: 15vh;
+  }
+  
+  .d-pad-btn {
+    font-size: 4vh;
+  }
+  
+  .action-btn {
+    width: 12vh;
+    height: 12vh;
+  }
+  
+  .btn-icon {
+    font-size: 6vh;
+  }
+  
+  .btn-label {
+    font-size: 2vh;
+  }
+  
+  .mobile-pause-btn {
+    top: 2vh;
+    right: 2vh;
+    width: 8vh;
+    height: 8vh;
+    font-size: 4vh;
+  }
+}
+
+/* Efectos de feedback háptico visual */
+.d-pad-btn.active::after,
+.action-btn.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  border-radius: inherit;
+  pointer-events: none;
+  animation: ripple 0.3s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}

@@ -1,0 +1,103 @@
+/* Botón volver */
+body{
+  overflow: hidden;
+}
+p{
+  font-family: Arial, Helvetica, sans-serif;
+}
+.backBtn{
+  background: url('../../assets/nubevoladora.png'), transparent;
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/nubevoladora.avif');
+  }
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  box-shadow: none;
+  top: 2vw;
+  left: 3vw;
+  width: 5vw;
+  height: 5vw;
+  border: none;
+  filter: drop-shadow(0 0 10px #5740058f);
+  transition: 0.4s ease-in-out;
+  z-index: 9990;
+  cursor: pointer;
+}
+
+.backBtn:hover{
+  transform: translateX(-1vw);
+  filter: drop-shadow(0 0 5px #fff67a);
+}
+.nube {
+  position: absolute; /* Cambiado de absolute a fixed para que cubra toda la pantalla */
+  width: 190vw;
+  height: 190vh;
+  background: url('../../assets/nubevoladora.png');
+  @supports (background-image: url()) and (format: avif) {
+    background-image: url('../../assets/nubevoladora.avif');
+  }
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  top: -15vw;
+  left: -15vw;
+  z-index: 9999; /* Aumentado para asegurar que esté encima de todo */
+  transform: translateX(-200vw); /* Estado inicial: fuera de pantalla */
+  filter: drop-shadow(0 0 100px #b58300);
+  cursor: no-drop;
+  transition: 0.5s ease-in-out;
+}
+
+.nube.show {
+  animation: nubeshow 0.8s forwards;
+}
+
+/* Animación para cuando la nube aparece (transición de entrada) */
+@keyframes nubeshow {
+  0% { 
+    transform: translateX(-200vw)rotate3d(0, 1, 0, 180deg); 
+  }
+  100% { 
+    transform: translateX(-50vw)rotate3d(0, 1, 0, 180deg)}
+}
+
+/* Animación para cuando la nube desaparece (transición de salida) */
+@keyframes nubehide {
+  0% { 
+    transform: translateX(0);
+  }
+  100% { 
+    transform: translateX(-200vw);
+  }
+}
+
+/* Clase para ocultar la nube después de la transición */
+.nube:not(.show) {
+  animation: nubehide 0.8s forwards;
+}
+@media (max-width: 1024px) {
+.nube{
+  top: -60vw;
+  left: -40vw;
+  width: 700vw;
+}
+
+ @keyframes nubehide {
+    0% {transform: translateX(0)}
+    100% {transform: translateX(-700vw);}
+  }
+    @keyframes nubeshow {
+    0% {transform: translateX(-700vw);}
+    100% {transform: translateX(-200vw)}
+  }
+}
+@media (max-width: 768px) {
+  .backBtn{
+    width: 10vw;
+    height: 10vw;
+    top: 3vh;
+    left: 4vw;
+  }
+}
