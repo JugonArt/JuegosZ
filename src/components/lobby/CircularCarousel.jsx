@@ -536,6 +536,14 @@ export default function CircularCarousel({ projects, onPlayClick, getGameplayCla
     wheelSpeed: 3,
     scrollEase: 0.15
   });
+
+  // Si estamos en móvil/tablet, congelar la interacción para que el carousel
+  // quede fijo con SpaceInvaders centrado y no sea scrolleable.
+  if (isMobile) {
+    try {
+      appRef.current.freeze();
+    } catch (e) {}
+  }
   
   // Restaurar estado del scroll solo si ya existía (no es la primera carga)
   if (scrollStateRef.current) {
@@ -567,6 +575,9 @@ export default function CircularCarousel({ projects, onPlayClick, getGameplayCla
         wheelSpeed: 3,
         scrollEase: 0.15
       });
+      if (newIsMobile) {
+        try { appRef.current.freeze(); } catch (e) {}
+      }
       
       // Restaurar estado del scroll
       if (scrollStateRef.current) {

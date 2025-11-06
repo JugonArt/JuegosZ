@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import styles from '../styles/Puntajes.module.css';
 import { getSpaceInvadersScores, getSimonDiceScores } from '../../utils/scoreDatabase';
+import useMobileDetection from '../../hooks1942/useMobileDetection';
 
 const Puntajes = ({ animate }) => {
   // State for database scores (initially empty)
@@ -157,6 +158,8 @@ const Puntajes = ({ animate }) => {
     });
   }, [simonRows]);
 
+  const { isMobile, isTablet } = useMobileDetection();
+
   // Helpers to control max-height with JS for smooth, jump-free transitions
   const setOpenHeight = (bodyEl, contentEl) => {
     if (!bodyEl || !contentEl) return;
@@ -301,6 +304,8 @@ const Puntajes = ({ animate }) => {
               </div>
             </div>
 
+            {/* Mostrar SimonDice sólo en dispositivos de escritorio */}
+            {!(isMobile || isTablet) && (
             <div className={`${styles.accordionItem} ${open.simon ? styles.opened : styles.closed}`}>
               <button
                 className={styles.accordionHeader}
@@ -363,6 +368,7 @@ const Puntajes = ({ animate }) => {
                 </div>
               </div>
             </div>
+            )}
           </div>
         </div>
       </div>

@@ -20,9 +20,9 @@ const Lobby = ({ onNavigate, animate, isTransitioning }) => {
   const { isMobile, isTablet, isTouchDevice } = useMobileDetection();
 
   const displayedProjects = useMemo(() => {
-    // Solo en móviles/tablets mostrar SpaceInvaders y SimonDice
+    // Solo en móviles/tablets mostrar únicamente SpaceInvaders
     if (isMobile || isTablet || isTouchDevice) {
-      return projects.filter(p => ['spaceinvaders', 'simondice'].includes(p.id));
+      return projects.filter(p => p.id === 'spaceinvaders');
     }
     return projects;
   }, [projects, isMobile, isTablet, isTouchDevice]);
