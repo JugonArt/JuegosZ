@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-  "build": "cross-env CI=false react-scripts build",
+    "build": "cross-env CI=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "optimize:images": "node optimize-images.js",
@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",
+    "cross-env": "^10.1.0",
     "ffmpeg-static": "^5.1.0",
     "fluent-ffmpeg": "^2.1.2",
     "globby": "^13.2.2",
