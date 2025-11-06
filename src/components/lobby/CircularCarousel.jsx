@@ -656,7 +656,80 @@ const updateCards = () => {
   }
   requestAnimationFrame(updateCards);
 };
-  updateCards();
+  // Iniciar el bucle de actualización de las cartas **después** de que WebGL
+  // haya inicializado las tarjetas. En dispositivos móviles a veces las
+  // posiciones no están listas al primer raf, así que hacemos un pequeño poll
+  // de frames (hasta 10) y luego forzamos el snap inicial.
+  const startUpdateLoop = () => {
+    let attempts = 0;
+    const tryInit = () => {
+      attempts += 1;
+      const app = appRef.current;
+
+      const ready = app && app.cards && app.cards.length > 0 && app.cards[0].plane && app.cards[0].plane.scale && app.cards[0].plane.scale.x && !isNaN(app.cards[0].plane.scale.x);
+
+      if (ready) {
+        try {
+          // Asegurar que tamaños y viewport estén sincronizados
+          app.onResize();
+
+          // Intentar forzar que la tarjeta central sea SpaceInvaders en la
+          // carga inicial. Buscamos el índice de la tarjeta correspondiente
+          // dentro del grupo central (segunda réplica).
+          const projectCount = app.projects ? app.projects.length : 0;
+          let targetIndex = null;
+          if (projectCount > 0) {
+            for (let i = 0; i < app.cards.length; i++) {
+              const cardProject = app.cards[i].project;
+              if (cardProject && cardProject.id === 'spaceinvaders') {
+                // comprobamos si pertenece al grupo central
+                if (i >= projectCount && i < projectCount * 2) {
+                  targetIndex = i;
+                  break;
+                }
+                // si no encontramos en el grupo central, guardamos la primera
+                if (targetIndex === null) targetIndex = i;
+              }
+            }
+          }
+
+          if (targetIndex !== null) {
+            const cardWidth = app.cards[0].width || 0;
+            const scrollPos = -cardWidth * targetIndex;
+            app.scroll.current = scrollPos;
+            app.scroll.target = scrollPos;
+            app.scroll.last = scrollPos;
+          } else {
+            // Fallback: usar onCheck() si no encontramos el proyecto
+            app.onCheck();
+            app.scroll.last = app.scroll.current;
+          }
+        } catch (e) {
+          // ignorar errores menores
+        }
+
+        // iniciar el loop de actualización del DOM
+        updateCards();
+      } else if (attempts < 10) {
+        // Intentar en el siguiente frame
+        requestAnimationFrame(tryInit);
+      } else {
+        // Fallback: si no quedó listo, forzamos el inicio para evitar bloquear
+        try {
+          if (app) {
+            app.onResize();
+            app.onCheck();
+            app.scroll.last = app.scroll.current;
+          }
+        } catch (e) {}
+        updateCards();
+      }
+    };
+
+    requestAnimationFrame(tryInit);
+  };
+
+  startUpdateLoop();
 
   return () => {
     window.removeEventListener('resize', debouncedResize);

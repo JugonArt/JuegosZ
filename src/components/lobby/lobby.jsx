@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import CircularCarousel from './CircularCarousel.jsx';
 import Puntajes from './Puntajes.jsx';
 import styles from '../styles/lobby.module.css';
+import useMobileDetection from '../../hooks1942/useMobileDetection';
 
 const Lobby = ({ onNavigate, animate, isTransitioning }) => {
   const [activeView, setActiveView] = useState('juegos');
@@ -14,6 +15,17 @@ const Lobby = ({ onNavigate, animate, isTransitioning }) => {
     { id: 'tateti', title: 'Tateti', description: 'Juego clásico de Tateti que representa una batalla icónica de rivales', colorClass: 'blue' },
     { id: 'simondice', title: 'Simon Dice', description: 'Memoriza la secuencia de las esferas del dragón', colorClass: 'green' },
   ], []);
+
+  // Detectar dispositivo (móvil/tablet) y filtrar proyectos para dispositivos pequeños
+  const { isMobile, isTablet, isTouchDevice } = useMobileDetection();
+
+  const displayedProjects = useMemo(() => {
+    // Solo en móviles/tablets mostrar SpaceInvaders y SimonDice
+    if (isMobile || isTablet || isTouchDevice) {
+      return projects.filter(p => ['spaceinvaders', 'simondice'].includes(p.id));
+    }
+    return projects;
+  }, [projects, isMobile, isTablet, isTouchDevice]);
 
   const getGameplayClasses = useCallback((gameId) => {
     const gameplayConfig = {
@@ -99,7 +111,7 @@ const Lobby = ({ onNavigate, animate, isTransitioning }) => {
 
       {activeView === 'juegos' && (
         <CircularCarousel 
-          projects={projects}
+          projects={displayedProjects}
           onPlayClick={handlePlayClick}
           getGameplayClasses={getGameplayClasses}
           animate={animate || isAnimating}

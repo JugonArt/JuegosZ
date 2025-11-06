@@ -51,6 +51,7 @@
     ]
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@tailwindcss/postcss": "^4.1.13",
     "cross-env": "^10.1.0",
     "ffmpeg-static": "^5.1.0",
