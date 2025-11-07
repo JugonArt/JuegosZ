@@ -3,6 +3,7 @@ import CircularCarousel from './CircularCarousel.jsx';
 import Puntajes from './Puntajes.jsx';
 import styles from '../styles/lobby.module.css';
 import useMobileDetection from '../../hooks1942/useMobileDetection';
+import useLobbySound from '../../hooks/useLobbySound';
 
 const Lobby = ({ onNavigate, animate, isTransitioning }) => {
   const [activeView, setActiveView] = useState('juegos');
@@ -61,20 +62,12 @@ const Lobby = ({ onNavigate, animate, isTransitioning }) => {
     onNavigate?.(projectId);
   }, [onNavigate]);
 
-  const audioRef = useRef(null);
-
-  useEffect(() => {
-    audioRef.current = new Audio('/sounds/LobbySounds/LobbyChanging.mp3');
-    audioRef.current.volume = 0.6;
-  }, []);
+  const playLobbyChange = useLobbySound('/sounds/LobbySounds/LobbyChanging.mp3', { volume: 0.6 });
 
   const handleViewChange = (view) => {
     if (view !== activeView) {
       // Reproducir sonido al cambiar de vista
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.play();
-      }
+      try { playLobbyChange(); } catch (e) {}
 
       setIsAnimating(true);
       setActiveView(view);
@@ -96,7 +89,7 @@ const Lobby = ({ onNavigate, animate, isTransitioning }) => {
             onClick={() => handleViewChange('juegos')}
           >
             <div className={`${styles.Icon} ${styles.home}`}/>
-            <h1 className={styles.shortcuts}>Juegos</h1>
+            {!(isMobile || isTablet) && <h1 className={styles.shortcuts}>Juegos</h1>}
           </button>
           <div className={styles.gap}/>
           <button 
@@ -104,7 +97,7 @@ const Lobby = ({ onNavigate, animate, isTransitioning }) => {
             onClick={() => handleViewChange('puntajes')}
           >
             <div className={`${styles.Icon} ${styles.score}`}/>
-            <h1 className={styles.shortcuts}>Puntajes</h1>
+            {!(isMobile || isTablet) && <h1 className={styles.shortcuts}>Puntajes</h1>}
           </button>
         </div>
       </div>

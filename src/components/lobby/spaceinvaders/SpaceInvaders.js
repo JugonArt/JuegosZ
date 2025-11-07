@@ -557,147 +557,162 @@ const initializeShields = useCallback(() => {
   }
 
   gameDataRef.current.shields = shields;
+  // finished initializing shields
 }, []);
 
   const resetGame = useCallback(
     (fullReset = false, levelOverride = null) => {
-    console.log('[DEBUG] resetGame called, fullReset=', fullReset, 'levelOverride=', levelOverride)
-    const gameAreaElement = document.querySelector(`.${styles.gameArea}`) // CORREGIDO
-    const width = gameAreaElement?.offsetWidth ||  window.innerWidth * 0.8
-      const height = gameAreaElement?.offsetHeight || window.innerHeight * 0.9
-      const shooterMetrics = getShooterMetrics(width);
-document.documentElement.style.setProperty('--shooter-w', `${shooterMetrics.sw}px`);
-document.documentElement.style.setProperty('--shooter-h', `${shooterMetrics.sh}px`);
-document.documentElement.style.setProperty('--shooter-scale', `${shooterMetrics.scale}`);
-const sp = getSpeedProfile(width);
-const pp = getProjectileProfile(width);
-const shSpd = getShooterSpeed(width);
-      // determine which level to base the speed on: explicit override > fullReset => level 1 > current level
-      const useLevel = (typeof levelOverride === 'number' && levelOverride > 0) ? levelOverride : (fullReset ? 1 : level)
-      const baseSeed = sp.base
-gameDataRef.current = {
-  shooter: {
-    x: width / 2 - shooterMetrics.sw / 2,
-    y: height - 60,
-    width: shooterMetrics.sw,
-    height: shooterMetrics.sh
-  },
-  shooterSpeed: shSpd,
-  projectiles: pp,
-  invaders: [],
-  lasers: [],
-  enemyLasers: [],
-  shields: [],
-  powerUps: [],
-  superBeams: [],
-  explosions: [],
-  invaderDirection: 1,
-  // Store base speed per level / admin changes here
-  baseInvaderSeed: baseSeed,
-  baseInvaderSpeed: Math.max(0.01, baseSeed * Math.pow(LEVEL_BASE_MULTIPLIER, Math.max(0, useLevel - 1))),
-  // temporary edge bonus applied when aliens hit edges
-  edgeSpeedBonus: 0,
-  // compatibility field; effective speed will be computed as baseInvaderSpeed + edgeSpeedBonus
-  invaderSpeed: sp.base,
-  invaderDropSpeed: sp.drop,
-  // Special enemy system
-  specialEnemies: [], // active special enemy entities
-  specialSpheres: [], // active giant spheres
-  specialSpawnTimer: 0,
-  // base probability per minute (as a fraction). Will be scaled by level.
-  specialBaseProb: 0.02,
-  specialSideToggle: 0, // toggle to alternate spawn side
-  // only one freezer at a time
-  freezerActive: false,
-  // default durations for special enemy behavior
-  special: {
-    sphereSpawnDuration: 600, // ms - visual grow time
-    preFireDuration: 2000, // ms - how long freezer charges before firing
-    departDelayAfterFire: 1000, // ms - extra delay before departing after firing
-  },
-  invaderEdgeIncrement: sp.edgeInc,
-  maxInvaderSpeed: sp.max,
-  lastInvaderFire: 0,
-  superCharge: [0, 0],
-  lastSuperUse: [0, 0],
-  superCooldown: 3000,
-  isPaused: false,
-  gameAreaWidth: width,
-  gameAreaHeight: height,
-  shootCooldown: 500,
-}
+      console.log('[DEBUG] resetGame called, fullReset=', fullReset, 'levelOverride=', levelOverride)
 
-      // Reset persistent player state only on fullReset (returning to menu/new game)
-      if (fullReset) {
-        setScore([0, 0])
-        setLives([3, 3])
-        setSuperReady([false, false])
-        setHasLostInitialLife([false, false])
-      } else {
-        // Keep score and lives across level transitions; only reset transient state
-        // Ensure superReady is recalculated based on preserved score
-        updateSuperDisplay()
-      }
+      // Measure AFTER layout to ensure we get the real gameArea size.
+      const measureAndInit = () => {
+        // Use getBoundingClientRect for more reliable fractional sizes on mobile
+        const gaEl = document.querySelector(`.${styles.gameArea}`)
+        const rect = gaEl ? gaEl.getBoundingClientRect() : null
+        const width = rect ? Math.round(rect.width) : Math.round((gaEl?.offsetWidth) || window.innerWidth * 0.8)
+        const height = rect ? Math.round(rect.height) : Math.round((gaEl?.offsetHeight) || window.innerHeight * 0.9)
 
-      // Solo resetear playerFinished si es un reset completo (volver al menú)
-      if (fullReset) {
-        setPlayerFinished([false, false])
-        setCurrentPlayer(1)
-        setLevel(1)
-      }
+        const shooterMetrics = getShooterMetrics(width)
+        const sp = getSpeedProfile(width)
+        const pp = getProjectileProfile(width)
+        const shSpd = getShooterSpeed(width)
 
-      console.log('[DEBUG] resetGame after init: score=', score, 'lives=', lives)
+        const useLevel = (typeof levelOverride === 'number' && levelOverride > 0) ? levelOverride : (fullReset ? 1 : level)
+        const baseSeed = sp.base
 
-      lastShootTime.current = 0
-      initializeShields()
-// Igualar la altura visual de Bardock al escudo
-const shields = gameDataRef.current.shields || [];
-if (shields.length) {
-  const avgH = Math.round(shields.reduce((a,s)=>a+s.height,0)/shields.length);
-  const baseShooterH = gameDataRef.current.shooter.height; // el "sh" sin escala
-  const scale = Math.max(1, avgH / baseShooterH);
-  document.documentElement.style.setProperty('--shooter-scale', `${scale}`);
-}
-// === Fijar tamaño de enemigos "como 1025" en desktop grande ===
-const w = gameDataRef.current.gameAreaWidth;
-if (w > 1024) {
-  // En 1025px usamos shields de 110x130 → invaders = 90% del ancho: ~99×79
-  const invaderW1025 = Math.round(80 * 0.90); // 99
-  const invaderH1025 = Math.round(invaderW1025 * 0.80); // ~79
-
-  document.documentElement.style.setProperty('--invader-w', `${invaderW1025}px`);
-  document.documentElement.style.setProperty('--invader-h', `${invaderH1025}px`);
-} else {
-  // limpiar para que móviles/tablets usen lo que ya tenés
-  document.documentElement.style.removeProperty('--invader-w');
-  document.documentElement.style.removeProperty('--invader-h');
-}
-      initializeInvaders()
-      initializeShields()
-
-      // Debug: print measurements so we can inspect hitbox vs gameArea sizes
-      try {
-        if (typeof SHOW_HITBOX !== 'undefined' && SHOW_HITBOX) {
-          const gaEl = document.querySelector(`.${styles.gameArea}`)
-          const gaW = gaEl ? gaEl.clientWidth : gameDataRef.current.gameAreaWidth
-          const rows = {}
-          (gameDataRef.current.invaders || []).forEach(inv => {
-            if (!rows[inv.row]) rows[inv.row] = { minX: Infinity, maxX: -Infinity, minCol: null, maxCol: null }
-            if (inv.x < rows[inv.row].minX) { rows[inv.row].minX = inv.x; rows[inv.row].minCol = inv.col }
-            if (inv.x > rows[inv.row].maxX) { rows[inv.row].maxX = inv.x; rows[inv.row].maxCol = inv.col }
-          })
-          console.log('[DBG] gameAreaWidth=', gaW, 'invaderRows=', Object.keys(rows).length)
-          Object.keys(rows).forEach(rk => {
-            const r = rows[rk]
-            const leftInv = (gameDataRef.current.invaders||[]).find(i => i.row==rk && i.col==r.minCol)
-            const rightInv = (gameDataRef.current.invaders||[]).find(i => i.row==rk && i.col==r.maxCol)
-            console.log(`[DBG] row ${rk}: left x=${r.minX} w=${leftInv?.width} | right x=${r.maxX} w=${rightInv?.width} -> rightEdge=${(r.maxX + (rightInv?.width||0))}`)
-          })
+        // Build the new game data object (deterministic)
+        gameDataRef.current = {
+          shooter: {
+            x: Math.round(width / 2 - shooterMetrics.sw / 2),
+            y: Math.round(height - 60),
+            width: shooterMetrics.sw,
+            height: shooterMetrics.sh
+          },
+          shooterSpeed: shSpd,
+          projectiles: pp,
+          invaders: [],
+          lasers: [],
+          enemyLasers: [],
+          shields: [],
+          powerUps: [],
+          superBeams: [],
+          explosions: [],
+          invaderDirection: 1,
+          baseInvaderSeed: baseSeed,
+          baseInvaderSpeed: Math.max(0.01, baseSeed * Math.pow(LEVEL_BASE_MULTIPLIER, Math.max(0, useLevel - 1))),
+          edgeSpeedBonus: 0,
+          invaderSpeed: sp.base,
+          invaderDropSpeed: sp.drop,
+          specialEnemies: [],
+          specialSpheres: [],
+          specialSpawnTimer: 0,
+          specialBaseProb: 0.02,
+          specialSideToggle: 0,
+          freezerActive: false,
+          special: {
+            sphereSpawnDuration: 600,
+            preFireDuration: 2000,
+            departDelayAfterFire: 1000,
+          },
+          invaderEdgeIncrement: sp.edgeInc,
+          maxInvaderSpeed: sp.max,
+          lastInvaderFire: 0,
+          superCharge: [0, 0],
+          lastSuperUse: [0, 0],
+          superCooldown: 3000,
+          isPaused: false,
+          gameAreaWidth: width,
+          gameAreaHeight: height,
+          shootCooldown: 500,
         }
-      } catch (e) { console.warn('[DBG] measuring post-init failed', e) }
-      // Reset centralized music so it restarts after countdown
+
+        // Apply CSS variables for shooter and invaders
+        try {
+          document.documentElement.style.setProperty('--shooter-w', `${shooterMetrics.sw}px`)
+          document.documentElement.style.setProperty('--shooter-h', `${shooterMetrics.sh}px`)
+          document.documentElement.style.setProperty('--shooter-scale', `${shooterMetrics.scale}`)
+        } catch (e) {}
+
+        // Reset persistent player state only on fullReset
+        if (fullReset) {
+          setScore([0, 0])
+          setLives([3, 3])
+          setSuperReady([false, false])
+          setHasLostInitialLife([false, false])
+        } else {
+          updateSuperDisplay()
+        }
+
+        if (fullReset) {
+          setPlayerFinished([false, false])
+          setCurrentPlayer(1)
+          setLevel(1)
+        }
+
+        lastShootTime.current = 0
+
+        // Ensure init runs inside a RAF so DOM layout is stable and sizes are correct
+        requestAnimationFrame(() => {
+          try {
+            initializeShields()
+            // Align shooter visual scale with shields average
+            const shieldsLocal = gameDataRef.current.shields || []
+            if (shieldsLocal.length) {
+              const avgH = Math.round(shieldsLocal.reduce((a, s) => a + s.height, 0) / shieldsLocal.length)
+              const baseShooterH = gameDataRef.current.shooter.height
+              const scale = Math.max(1, avgH / baseShooterH)
+              try { document.documentElement.style.setProperty('--shooter-scale', `${scale}`) } catch (e) {}
+            }
+
+            // invaders depend on shields for sizing - compute after shields
+            initializeInvaders()
+
+            // Update invader CSS vars for large desktop
+            const wcur = gameDataRef.current.gameAreaWidth
+            if (wcur > 1024) {
+              const invaderW1025 = Math.round(80 * 0.90)
+              const invaderH1025 = Math.round(invaderW1025 * 0.80)
+              document.documentElement.style.setProperty('--invader-w', `${invaderW1025}px`)
+              document.documentElement.style.setProperty('--invader-h', `${invaderH1025}px`)
+            } else {
+              document.documentElement.style.removeProperty('--invader-w')
+              document.documentElement.style.removeProperty('--invader-h')
+            }
+
+            // Diagnostics: log key values so we can compare first-run vs restart
+            // Ensure one render cycle picks up new positions
+            if (gameLoopRef.current == null && gameState === 'playing') {
+              requestAnimationFrame(() => {})
+            }
+          } catch (e) {
+            console.warn('[DEBUG] RAF init error', e)
+          }
+        })
+      }
+
+      // If the gameArea element exists now, run measurement immediately; else retry a few times
+      const elNow = document.querySelector(`.${styles.gameArea}`)
+      if (elNow) {
+        // measure on next frame for stable layout
+        requestAnimationFrame(measureAndInit)
+      } else {
+        // Retry loop: try a few times to allow mount/layout to complete
+        let attempts = 0
+        const retry = () => {
+          attempts++
+          const e = document.querySelector(`.${styles.gameArea}`)
+          if (e || attempts >= 10) {
+            requestAnimationFrame(measureAndInit)
+          } else {
+            setTimeout(retry, 120)
+          }
+        }
+        setTimeout(retry, 120)
+      }
+
+      // Ensure bgm resets so it will be started after countdown
       try { bgm.stop(); } catch (e) {}
-      console.log('[DEBUG] resetGame finished: invaders=', gameDataRef.current.invaders.length, 'shields=', (gameDataRef.current.shields||[]).length)
+      console.log('[DEBUG] resetGame scheduled measurement/init')
     },
     [initializeInvaders, initializeShields, level, updateSuperDisplay],
   )
@@ -713,8 +728,11 @@ if (w > 1024) {
         // Asegurar que el segundo jugador empiece desde el nivel 1
         // para que su resultado (playerResult.level) refleje el nivel alcanzado
         // durante su propia partida y no herede el nivel del jugador 1.
-        try { setLevel(1); } catch (e) { /* defensive */ }
-        try { resetGame(false); } catch (e) { console.warn('[TRANSITION] resetGame failed', e) }
+  try { setLevel(1); } catch (e) { /* defensive */ }
+  // Force level override when transitioning to player 2 so resetGame
+  // uses level 1 immediately (setState is async and resetGame reads `level` from
+  // closure). Passing levelOverride avoids inheriting previous player's level.
+  try { resetGame(false, 1); } catch (e) { console.warn('[TRANSITION] resetGame failed', e) }
         setCountdown(3);
         setGameState('countdown');
       };
@@ -2297,8 +2315,12 @@ const render = useCallback(() => {
     // Container for shield and health bar
     const shieldContainer = document.createElement("div")
     shieldContainer.className = styles.shieldContainer || 'shield-container'
-    shieldContainer.style.left = shield.x + "px"
-    shieldContainer.style.top = shield.y + "px"
+  // Position by shield center and use translateX(-50%) so the container stays
+  // horizontally centered regardless of parent layout/offsets (fixes mobile shift)
+  const shieldCenterX = Math.round(shield.x + (shield.width || 0) / 2)
+  shieldContainer.style.left = shieldCenterX + "px"
+  shieldContainer.style.top = shield.y + "px"
+  shieldContainer.style.transform = 'translateX(-50%)'
 
     // Shield health bar
     const healthBar = document.createElement("div")
@@ -2792,7 +2814,22 @@ const handleMobileSuper = useCallback(() => {
             // avoid starting music while still in menus.
           }
           
-          // 5. Finalmente cambiar el estado del juego
+          // 5. Finalmente, forzar una re-medición/initialización ahora que el
+          // área de juego se ha montado. Esto corrige el caso donde resetGame
+          // fue llamado antes de que el DOM del gameArea existiera (primer
+          // arranque). Hacemos la llamada en el siguiente frame para que
+          // React haya completado el montaje.
+          requestAnimationFrame(() => {
+            try {
+              // Use a non-full reset here to preserve the intention of the
+              // original startGame() which already called resetGame(true)
+              resetGame(false)
+            } catch (e) {
+              console.warn('[DBG] post-mount resetGame failed', e)
+            }
+          })
+
+          // 6. Cambiar el estado del juego a playing
           setGameState("playing");
           console.log('[DEBUG] game sequence completed - now playing');
         } catch (error) {
@@ -2839,85 +2876,141 @@ const handleMobileSuper = useCallback(() => {
     }
 
     const initAudio = (path) => {
-      const audio = new Audio(path);
-      audio.preload = 'auto';
-      // Keep element volume at 1 and rely on master gain for global control
+      // Accept either a string path or an array of candidate paths
+      const srcCandidates = Array.isArray(path) ? path.slice(0) : [path]
+
+      const audio = new Audio()
+      audio.preload = 'auto'
       audio.volume = 1
+      audio._baseVolume = 1
+      audio._available = false // set true once canplaythrough fired
+      audio._attempts = 0
 
-      // Mejor manejo de errores y eventos
-      audio.addEventListener('error', (ev) => {
-        console.warn('[AUDIO] error on', audio.src, ev);
-        }); 
-        audio.addEventListener('stalled', () => { 
-          console.warn('[AUDIO] stalled on', audio.src); 
-        }); 
-        audio.addEventListener('canplaythrough', () => { 
-          console.log('[AUDIO] ready:', path); 
-        }); 
-      
-        // Store base volume multiplier (default 1)
-        audio._baseVolume = 1;
-
-      // Precarga inmediata
-      try {
-        audio.load();
-      } catch (e) {
-        console.warn('[AUDIO] preload failed:', path, e);
-      }
-
-      // If WebAudio available, create a MediaElementSource and connect to master gain
-      try {
-        if (audioContextRef.current && masterGainRef.current) {
+      // helper: try to set a candidate src and load
+      const tryLoadCandidate = async (candidate) => {
+        try {
+          audio._attempts++
+          // assign src then attempt to load. using assign then load avoids
+          // some browser quirks where new Audio(path) throws or marks empty
+          audio.src = candidate
+          // Some servers might not send correct headers; attempt a HEAD fetch to pre-validate
           try {
-            const src = audioContextRef.current.createMediaElementSource(audio)
-              // Create a gain node for this audio's base volume
-              const baseGain = audioContextRef.current.createGain();
-              baseGain.gain.value = audio._baseVolume;
-              // Connect through base gain to master
-              src.connect(baseGain);
-              baseGain.connect(masterGainRef.current);
-            audio._sourceNode = src
-              audio._baseGain = baseGain;
+            const controller = new AbortController()
+            const timeout = setTimeout(() => controller.abort(), 2500)
+            const res = await fetch(candidate, { method: 'HEAD', signal: controller.signal })
+            clearTimeout(timeout)
+            if (!res.ok) {
+              console.warn('[AUDIO] HEAD check failed for', candidate, res.status)
+              return false
+            }
+          } catch (err) {
+            // HEAD may be blocked/cors; ignore but proceed to load anyway
+          }
+
+          // Setup temporary handlers for this candidate
+          const onCan = () => {
+            audio._available = true
+            audio.removeEventListener('canplaythrough', onCan)
+            audio.removeEventListener('error', onErr)
+            console.log('[AUDIO] canplaythrough for', candidate)
+          }
+          const onErr = (ev) => {
+            audio._available = false
+            audio.removeEventListener('canplaythrough', onCan)
+            audio.removeEventListener('error', onErr)
+            console.warn('[AUDIO] error event for', candidate, ev)
+          }
+
+          audio.addEventListener('canplaythrough', onCan)
+          audio.addEventListener('error', onErr)
+
+          try {
+            // try loading; some browsers require calling load explicitly
+            audio.load()
           } catch (e) {
-            // Some browsers may throw if element already has a source or context not allowed
-            console.warn('[AUDIO] createMediaElementSource failed for', path, e)
+            console.warn('[AUDIO] load() threw for', candidate, e)
           }
+
+          // Give it a short window to fire canplaythrough
+          await new Promise((resolve) => setTimeout(resolve, 600))
+
+          // if available now, success
+          if (audio._available) return true
+          // otherwise, remove handlers and return false to try next
+          try { audio.removeEventListener('canplaythrough', onCan) } catch(e) {}
+          try { audio.removeEventListener('error', onErr) } catch(e) {}
+          return false
+        } catch (err) {
+          console.warn('[AUDIO] tryLoadCandidate threw for', candidate, err)
+          return false
         }
-      } catch (e) {
-        console.warn('[AUDIO] WebAudio attach failed:', e)
       }
 
-      // Mejorar el clonado para asegurar attach al AudioContext y volumen correcto
-      const originalCloneNode = audio.cloneNode;
+      // Try candidates sequentially with limited retries
+      (async () => {
+        for (let i = 0; i < srcCandidates.length; i++) {
+          const c = srcCandidates[i]
+          let ok = false
+          // Try up to 2 times per candidate
+          for (let attempt = 0; attempt < 2 && !ok; attempt++) {
+            ok = await tryLoadCandidate(c)
+            if (!ok) {
+              // small backoff
+              await new Promise(r => setTimeout(r, 250 * (attempt + 1)))
+            }
+          }
+          if (ok) break
+        }
+
+        // If we still don't have availability, mark and keep the last src assigned
+        if (!audio._available) {
+          console.warn('[AUDIO] no available source found for', srcCandidates)
+        }
+
+        // If WebAudio available, attach source now (if possible)
+        try {
+          if (audioContextRef.current && masterGainRef.current && audio._available) {
+            try {
+              const src = audioContextRef.current.createMediaElementSource(audio)
+              const baseGain = audioContextRef.current.createGain()
+              baseGain.gain.value = audio._baseVolume
+              src.connect(baseGain)
+              baseGain.connect(masterGainRef.current)
+              audio._sourceNode = src
+              audio._baseGain = baseGain
+            } catch (e) {
+              console.warn('[AUDIO] createMediaElementSource failed for', audio.src, e)
+            }
+          }
+        } catch (e) {
+          console.warn('[AUDIO] WebAudio attach failed:', e)
+        }
+      })()
+
+      // stall/error handlers
+      audio.addEventListener('stalled', () => {
+        console.warn('[AUDIO] stalled on', audio.src)
+      })
+      audio.addEventListener('emptied', () => {
+        // sometimes browsers mark element emptied when source invalid
+        console.warn('[AUDIO] emptied event for', audio.src)
+      })
+
+      // Enhance cloneNode to maintain behavior
+      const originalCloneNode = audio.cloneNode.bind(audio)
       audio.cloneNode = function() {
-        const clone = originalCloneNode.call(this);
-        clone.preload = 'auto';
-        clone.volume = 1
-          clone._baseVolume = audio._baseVolume;
-        try {
-          clone.load();
-        } catch (e) {
-          console.warn('[AUDIO] clone preload failed:', path, e);
-        }
-        // Attach clone to audio context as well so master gain controls it
-        try {
-          if (audioContextRef.current && masterGainRef.current) {
-              const csrc = audioContextRef.current.createMediaElementSource(clone);
-              const baseGain = audioContextRef.current.createGain();
-              baseGain.gain.value = clone._baseVolume;
-              csrc.connect(baseGain);
-              baseGain.connect(masterGainRef.current);
-            clone._sourceNode = csrc
-              clone._baseGain = baseGain;
-          }
-        } catch (e) {
-          console.warn('[AUDIO] clone attach failed:', path, e)
-        }
-        return clone;
-      };
-
-      return audio;
+        const clone = originalCloneNode(true)
+        try { clone.preload = 'auto' } catch (e) {}
+        try { clone.volume = 1 } catch (e) {}
+        try { clone._baseVolume = audio._baseVolume } catch (e) {}
+        try { clone.load() } catch (e) {}
+        // Avoid attaching to audio context for clones here; clones will be
+        // used transiently and master gain will still control if attached.
+        return clone
       }
+
+      return audio
+    }
 
       const initAudioWithVolume = (path, baseVolume = 1) => {
         const audio = initAudio(path);

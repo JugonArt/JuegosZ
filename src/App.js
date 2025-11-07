@@ -9,6 +9,7 @@ import SpaceInvaders from './components/lobby/spaceinvaders/SpaceInvaders.js';
 import Nube from './components/UI/nube.jsx';
 import LoadingScreen from './components/UI/LoadingScreen.jsx';
 import CustomCursor from './components/UI/CustomCursor.jsx'; // NUEVO
+import OrientationLock from './components/OrientationLock/OrientationLock.jsx';
 import { useNube } from './contexts/nubecontext.js';
 
 function App() {
@@ -82,6 +83,7 @@ function App() {
 
   return (
     <>
+      <OrientationLock />
       <CustomCursor /> {/* NUEVO - cursor personalizado */}
       {isLoading && <LoadingScreen onLoadComplete={handleLoadComplete} />}
       

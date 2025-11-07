@@ -302,7 +302,7 @@
 @media (max-width: 768px) {
   .scoresPanel{
     width: 80vw;
-    height: 70vh;
+    height: 60vh;
     border-radius: 4vh;
     margin-top: 24vh;
   }
@@ -333,7 +333,7 @@
 @media (max-width: 768px) {
   .scoresPanel{
     width: 100%;
-    height: 75vh;
+    height: 80vh;
     bottom: 0;
     border-bottom: none;
   }
@@ -365,7 +365,7 @@
   }
 
   .accordionItem.opened{
-    max-height: 50vh;
+    max-height: 70vh !important;
   }
   .accordionItem.closed{
     max-height: 7vh;

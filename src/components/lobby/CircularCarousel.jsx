@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Camera, Mesh, Plane, Program, Renderer, Transform } from 'ogl';
 import styles from '../styles/CircularCarousel.module.css';
+import useLobbySound from '../../hooks/useLobbySound';
 
 function debounce(func, wait) {
   let timeout;
@@ -158,7 +159,8 @@ onResize({ screen, viewport } = {}) {
   const isMobile = this.screen.width <= 768;
   // Con 4 juegos necesitamos más padding que con 5 para distribuir mejor
   const baseProjectCount = 5; // Número original de proyectos para el que se diseñó
-  const actualProjectCount = this.length / 2; // Dividir por 2 porque están duplicados
+  // Ahora triplicamos los proyectos (3 réplicas). Usar /3 para calcular el conteo
+  const actualProjectCount = this.length / 3;
   const paddingMultiplier = baseProjectCount / actualProjectCount;
   this.padding = isMobile ? 0.4 * paddingMultiplier : 2 * paddingMultiplier;
   
@@ -178,21 +180,44 @@ onResize({ screen, viewport } = {}) {
 }
 
 class CircularApp {
-constructor(container, { projects, onPlayClick, getGameplayClasses, bend = 2, grabSpeed = 1, wheelSpeed = 2, scrollSpeed = 2, scrollEase = 1 } = {}) {
-    // Crear instancias de Audio para los sonidos
-    this.selectorSound = new Audio('/sounds/LobbySounds/GameSelector.mp3');
-    this.selectorSound.volume = 0.2;
-    this.selectedSound = new Audio('/sounds/LobbySounds/GameSelected.mp3');
-    this.selectedSound.volume = 0.6;
-    
-    // Flag para primera interacción
+constructor(container, { projects, onPlayClick, getGameplayClasses, bend = 2, grabSpeed = 1, wheelSpeed = 2, scrollSpeed = 2, scrollEase = 1, freezeOnInit = false, playSelectorSound = null, playSelectedSound = null } = {}) {
+    // Prefer external sound providers (funciones) para evitar crear elementos
+    // audio directamente desde la clase. Si no se proporcionan, creamos
+    // Audio simples como fallback.
     this.hasInteracted = false;
 
-    // Debounce para el sonido del selector
+    if (typeof playSelectorSound === 'function') {
+      this.playSelector = playSelectorSound;
+    } else {
+      this.selectorAudio = new Audio('/sounds/LobbySounds/GameSelector.mp3');
+      this.selectorAudio.volume = 0.2;
+      this.playSelector = () => {
+        try {
+          this.selectorAudio.currentTime = 0;
+          const p = this.selectorAudio.play();
+          if (p && typeof p.then === 'function') p.catch(() => {});
+        } catch (e) {}
+      };
+    }
+
+    if (typeof playSelectedSound === 'function') {
+      this.playSelected = playSelectedSound;
+    } else {
+      this.selectedAudio = new Audio('/sounds/LobbySounds/GameSelected.mp3');
+      this.selectedAudio.volume = 0.6;
+      this.playSelected = () => {
+        try {
+          this.selectedAudio.currentTime = 0;
+          const p = this.selectedAudio.play();
+          if (p && typeof p.then === 'function') p.catch(() => {});
+        } catch (e) {}
+      };
+    }
+
+    // Debounce para el sonido del selector (usa this.playSelector)
     this.playSelectorSoundDebounced = debounce(() => {
       if (this.hasInteracted) {
-        this.selectorSound.currentTime = 0;
-        this.selectorSound.play().catch(() => {}); // Ignorar errores de reproducción
+        try { this.playSelector(); } catch (e) {}
       }
     }, 100);
 
@@ -216,7 +241,10 @@ constructor(container, { projects, onPlayClick, getGameplayClasses, bend = 2, gr
   this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck, 200);
-    this.isFrozen = false; // Nuevo: para congelar la interacción
+  // Flag para congelar la interacción. Puede venir desde las opciones para
+  // evitar una breve ventana donde el usuario pueda interactuar durante la
+  // inicialización en dispositivos móviles.
+  this.isFrozen = !!freezeOnInit;
   this.keyboardScrollAmount = 10; // Cantidad de scroll por tecla de flecha (doble)
     
     this.createRenderer();
@@ -226,21 +254,33 @@ constructor(container, { projects, onPlayClick, getGameplayClasses, bend = 2, gr
     this.createGeometry();
     this.createCards(bend);
     
-    // Ajustar scroll inicial para que SpaceInvaders del grupo central esté en el centro
-    // Con triplicación: [grupo1: Space,PPT,Tateti,Simon] [grupo2: Space,PPT,Tateti,Simon] [grupo3: ...]
-    // Array índices:     [0,    1,  2,     3    ] [4,    5,  6,     7    ] [8, ...]
-    // Queremos SpaceInvaders del grupo2 (índice 4) centrado
-    // El scroll se calcula como: -posición_de_la_tarjeta_en_x
-    // Como cada tarjeta está en x = index * cardWidth, necesitamos desplazar -4 * cardWidth
-    // PERO también necesitamos centrar, así que restamos media tarjeta más
-    if (this.cards.length > 0) {
-      const cardWidth = this.cards[0].width;
-      const projectCount = this.projects.length;
-      // Desplazamos para centrar la primera tarjeta del segundo grupo (SpaceInvaders)
-      // No es necesario ajuste adicional porque el update() ya maneja el centrado
-      this.scroll.current = -cardWidth * projectCount;
-      this.scroll.target = -cardWidth * projectCount;
-      this.scroll.last = -cardWidth * projectCount;
+    // Intentar centrar desde el inicio en la réplica central la tarjeta
+    // cuyo id sea 'spaceinvaders' (si existe). Esto evita que el carousel
+    // arranque en un espacio vacío.
+    if (this.cards && this.cards.length > 0) {
+      const cardWidth = this.cards[0].width || 0;
+      const projectCount = this.projects ? this.projects.length : 0;
+      let targetIndex = null;
+      if (projectCount > 0) {
+        for (let i = 0; i < this.cards.length; i++) {
+          const cardProject = this.cards[i].project;
+          if (cardProject && cardProject.id === 'spaceinvaders') {
+            // Preferir la réplica central
+            if (i >= projectCount && i < projectCount * 2) {
+              targetIndex = i;
+              break;
+            }
+            if (targetIndex === null) targetIndex = i;
+          }
+        }
+      }
+
+      if (targetIndex !== null) {
+        const scrollPos = -cardWidth * targetIndex;
+        this.scroll.current = scrollPos;
+        this.scroll.target = scrollPos;
+        this.scroll.last = scrollPos;
+      }
     }
     
     this.update();
@@ -255,7 +295,26 @@ constructor(container, { projects, onPlayClick, getGameplayClasses, bend = 2, gr
     });
     this.gl = this.renderer.gl;
     this.gl.clearColor(0, 0, 0, 0);
-    this.container.appendChild(this.gl.canvas);
+    // El contenedor puede ser null en situaciones de resize/remount rápido.
+    // Proteger y reintentar un frame después si aún no existe para evitar
+    // lanzar una excepción que rompa la app.
+    try {
+      if (this.container && this.container.appendChild) {
+        this.container.appendChild(this.gl.canvas);
+      } else {
+        // Reintentar una vez en el siguiente frame
+        requestAnimationFrame(() => {
+          try {
+            if (this.container && this.container.appendChild) {
+              this.container.appendChild(this.gl.canvas);
+            }
+          } catch (e) {}
+        });
+      }
+    } catch (e) {
+      // Ignorar errores de append para evitar crash; el canvas quedará
+      // unido cuando el contenedor esté disponible.
+    }
   }
 
   createCamera() {
@@ -350,8 +409,7 @@ this.scroll.target += (delta > 0 ? this.wheelSpeed : -this.wheelSpeed) * 2;
       if (centralCard && this.onPlayClick) {
         // Reproducir sonido de selección solo si ya hubo interacción
         if (this.hasInteracted) {
-          this.selectedSound.currentTime = 0;
-          this.selectedSound.play().catch(() => {}); // Ignorar errores de reproducción
+          try { this.playSelected(); } catch (e) {}
         }
         this.onPlayClick(centralCard.project.id);
       }
@@ -514,8 +572,36 @@ export default function CircularCarousel({ projects, onPlayClick, getGameplayCla
   // Actualizar las props en el ref cada render
   propsRef.current = { projects, onPlayClick, getGameplayClasses };
 
+  // Hooks para sonidos del lobby (selector y seleccionado)
+  const playSelector = useLobbySound('/sounds/LobbySounds/GameSelector.mp3', { volume: 0.2 });
+  const playSelected = useLobbySound('/sounds/LobbySounds/GameSelected.mp3', { volume: 0.6 });
+
   useEffect(() => {
   const isMobile = window.innerWidth <= 768;
+
+  // Si estamos en móvil/tablet, NO arrancamos el WebGL Carousel. En su
+  // lugar dejamos que el render muestre una carta estática centrada.
+  // Destruimos cualquier instancia previa para limpiar el canvas.
+  if (isMobile) {
+    try {
+      if (appRef.current) {
+        appRef.current.destroy();
+        appRef.current = null;
+      }
+    } catch (e) {}
+    try {
+      if (cardsRef.current) {
+        const dbg = cardsRef.current.querySelector('.__debugSlots');
+        if (dbg) dbg.parentNode.removeChild(dbg);
+      }
+    } catch (e) {}
+
+    // No iniciamos listeners ni nada más en móvil - el return cleanup es
+    // un noop (se recreará la lógica cuando el hook se vuelva a ejecutar
+    // por un cambio de props o si el usuario fuerza un resize que provoque
+    // el remount por otra parte de la app).
+    return () => {};
+  }
   
   // Guardar estado actual del scroll si existe
   if (appRef.current) {
@@ -534,7 +620,10 @@ export default function CircularCarousel({ projects, onPlayClick, getGameplayCla
     bend: isMobile ? -8 : -4,        // Más bend en móvil
     grabSpeed: isMobile ? 3 : 1,     // Más rápido en móvil
     wheelSpeed: 3,
-    scrollEase: 0.15
+    scrollEase: 0.15,
+    freezeOnInit: isMobile,
+    playSelectorSound: playSelector,
+    playSelectedSound: playSelected
   });
 
   // Si estamos en móvil/tablet, congelar la interacción para que el carousel
@@ -546,7 +635,10 @@ export default function CircularCarousel({ projects, onPlayClick, getGameplayCla
   }
   
   // Restaurar estado del scroll solo si ya existía (no es la primera carga)
-  if (scrollStateRef.current) {
+  // Para móviles/tablet queremos forzar que SpaceInvaders esté centrado
+  // al crear/reaparecer, así que no restauramos el scroll guardado en esos
+  // casos. Solo restauramos el estado previo en pantallas de escritorio.
+  if (scrollStateRef.current && !isMobile) {
     appRef.current.scroll.current = scrollStateRef.current.current;
     appRef.current.scroll.target = scrollStateRef.current.target;
     appRef.current.scroll.last = scrollStateRef.current.last;
@@ -573,14 +665,18 @@ export default function CircularCarousel({ projects, onPlayClick, getGameplayCla
         bend: newIsMobile ? -8 : -4,
         grabSpeed: newIsMobile ? 2 : 1,
         wheelSpeed: 3,
-        scrollEase: 0.15
+        scrollEase: 0.15,
+        freezeOnInit: newIsMobile,
+        playSelectorSound: playSelector,
+        playSelectedSound: playSelected
       });
       if (newIsMobile) {
         try { appRef.current.freeze(); } catch (e) {}
       }
       
-      // Restaurar estado del scroll
-      if (scrollStateRef.current) {
+      // Restaurar estado del scroll (solo para escritorio). En móvil
+      // preferimos forzar el centrado de SpaceInvaders al recrear.
+      if (scrollStateRef.current && !newIsMobile) {
         appRef.current.scroll.current = scrollStateRef.current.current;
         appRef.current.scroll.target = scrollStateRef.current.target;
         appRef.current.scroll.last = scrollStateRef.current.last;
@@ -608,6 +704,49 @@ const updateCards = () => {
     
     const positions = appRef.current.getCardPositions();
     const cards = cardsRef.current.querySelectorAll(`.${styles.cardWrapper}`);
+
+    // --- DEBUG: crear capa de marcadores de slots (solo en móvil) ---
+    let debugLayer = cardsRef.current.querySelector('.__debugSlots');
+    const isMobileNow = window.innerWidth <= 768;
+    if (!debugLayer) {
+      debugLayer = document.createElement('div');
+      debugLayer.className = '__debugSlots';
+      // Asegurar que el contenedor padre tenga positioning para que los
+      // absolute de los marcadores funcionen.
+      try { cardsRef.current.style.position = 'relative'; } catch (e) {}
+      debugLayer.style.position = 'absolute';
+      debugLayer.style.left = '0';
+      debugLayer.style.top = '0';
+      debugLayer.style.width = '100%';
+      debugLayer.style.height = '100%';
+      debugLayer.style.pointerEvents = 'none';
+      debugLayer.style.zIndex = '9999';
+      cardsRef.current.appendChild(debugLayer);
+    }
+
+    // Asegurar número de marcadores igual al número de posiciones
+    try {
+      while (debugLayer.children.length < positions.length) {
+        const m = document.createElement('div');
+        m.style.position = 'absolute';
+        m.style.top = '0';
+        m.style.height = '100%';
+        m.style.pointerEvents = 'none';
+        m.style.boxSizing = 'border-box';
+        m.style.zIndex = '9999';
+        m.style.display = 'none';
+        m.style.color = 'white';
+        m.style.fontSize = '12px';
+        m.style.textAlign = 'center';
+        m.style.lineHeight = '18px';
+        m.style.paddingTop = '6px';
+        debugLayer.appendChild(m);
+      }
+      while (debugLayer.children.length > positions.length) {
+        debugLayer.removeChild(debugLayer.lastChild);
+      }
+    } catch (e) {}
+    const containerWidth = cardsRef.current.clientWidth;
     
     // Verificar si hay movimiento
     const hasMovement = Math.abs(
@@ -615,16 +754,21 @@ const updateCards = () => {
     ) > 0.01;
 
     cards.forEach((card, index) => {
+      let translateX = 0;
+      let translateY = 0;
+      let rotateZ = 0;
+      let scale = 1;
+      let opacity = 1;
       if (positions[index]) {
         const pos = positions[index];
-        const scale = pos.scale.x / 10;
-        const translateX = pos.x * 60;
-        const translateY = pos.y * 50;
-        const rotateZ = pos.rotation * (180 / Math.PI);
+        scale = pos.scale.x / 10;
+        translateX = pos.x * 60;
+        translateY = pos.y * 50;
+        rotateZ = pos.rotation * (180 / Math.PI);
 
         const fadeFactor = 0.04;
         const fadeExponent = 2; 
-        const opacity = Math.max(0, 1 - Math.pow(Math.abs(pos.x) * fadeFactor, fadeExponent));
+        opacity = Math.max(0, 1 - Math.pow(Math.abs(pos.x) * fadeFactor, fadeExponent));
 
         card.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) rotateZ(${rotateZ}deg) scale(${scale})`;
         card.style.opacity = opacity;
@@ -636,6 +780,31 @@ const updateCards = () => {
           card.style.willChange = 'auto';
         }
       }
+
+      // Actualizar marcador debug para este índice (solo en móvil)
+      try {
+        const marker = debugLayer.children[index];
+        if (marker) {
+          if (!isMobileNow) {
+            marker.style.display = 'none';
+          } else {
+            marker.style.display = 'block';
+            // ancho estimado del slot en px: usar card.width * 60 como aproximación
+            const cardObj = appRef.current && appRef.current.cards ? appRef.current.cards[index] : null;
+            const slotW = (cardObj && cardObj.width ? cardObj.width * 60 : 160);
+            const left = Math.round(containerWidth / 2 + translateX - slotW / 2);
+            marker.style.left = `${left}px`;
+            marker.style.width = `${Math.max(40, slotW)}px`;
+            marker.style.border = '2px dashed rgba(255,0,0,0.9)';
+            marker.style.background = 'rgba(255,0,0,0.06)';
+            // label con id del proyecto si está disponible
+            try {
+              const projectId = (appRef.current && appRef.current.cards && appRef.current.cards[index] && appRef.current.cards[index].project) ? appRef.current.cards[index].project.id : `idx:${index}`;
+              marker.textContent = projectId;
+            } catch (e) { marker.textContent = index; }
+          }
+        }
+      } catch (e) {}
     });
 
     // Detect center index based on positions array (real-time) and apply class immediately
@@ -742,10 +911,143 @@ const updateCards = () => {
 
   startUpdateLoop();
 
+  // Observer para detectar cuando el carousel reaparece en pantalla (p.ej.
+  // al volver desde otra sección). Si el contenedor vuelve a ser visible en
+  // móvil/tablet, reenfocamos la tarjeta central a 'spaceinvaders' y volvemos
+  // a congelar la interacción para asegurar comportamiento consistente.
+  const observerCallback = (entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const isMobileNow = window.innerWidth <= 768;
+        if (isMobileNow && appRef.current) {
+          const tryRestore = (attempt = 0) => {
+            const app = appRef.current;
+            if (!app) return;
+            const ready = app.cards && app.cards.length > 0 && app.cards[0].plane && app.cards[0].plane.scale && app.cards[0].plane.scale.x && !isNaN(app.cards[0].plane.scale.x);
+                if (ready || attempt > 9) {
+                try {
+                  // Asegurar que tamaños/posiciones están sincronizados antes de
+                  // forzar la posición del scroll.
+                  try { app.onResize && app.onResize(); } catch (e) {}
+
+                  const projectCount = app.projects ? app.projects.length : 0;
+                  let targetIndex = null;
+                  if (projectCount > 0) {
+                    for (let i = 0; i < app.cards.length; i++) {
+                      const cardProject = app.cards[i].project;
+                      if (cardProject && cardProject.id === 'spaceinvaders') {
+                        if (i >= projectCount && i < projectCount * 2) {
+                          targetIndex = i;
+                          break;
+                        }
+                        if (targetIndex === null) targetIndex = i;
+                      }
+                    }
+                  }
+
+                  // Diagnostic logs to help debug slot positions on restore
+                  try {
+                    /* eslint-disable no-console */
+                    console.log('[Carousel] restore attempt:', { projectCount, targetIndex });
+                    if (app.cards && app.cards[0]) {
+                      const cardWidthLog = app.cards[0].width || 0;
+                      console.log('[Carousel] cardWidth:', cardWidthLog);
+                    }
+                    if (app.cards) {
+                      app.cards.forEach((c, idx) => {
+                        try {
+                          const pid = c.project && c.project.id ? c.project.id : null;
+                          console.log(`[Carousel] card[${idx}] pid=${pid} index=${c.index} x=${c.x} extra=${c.extra} isBefore=${c.isBefore} isAfter=${c.isAfter}`);
+                        } catch (e) {}
+                      });
+                    }
+                    /* eslint-enable no-console */
+                  } catch (e) {}
+
+                  if (targetIndex !== null && app.cards && app.cards[0]) {
+                    const cardWidth = app.cards[0].width || 0;
+                    const scrollPos = -cardWidth * targetIndex;
+
+                    // Reset structural state on each card so we don't keep
+                    // remnants from previous interactions (extra, isBefore/After)
+                    try {
+                      app.cards.forEach(card => {
+                        try {
+                          card.extra = 0;
+                          card.isBefore = false;
+                          card.isAfter = false;
+                          // recalc sizes/positions
+                          try { card.onResize({ screen: app.screen, viewport: app.viewport }); } catch (e) {}
+                          card.x = card.width * card.index;
+                        } catch (e) {}
+                      });
+                    } catch (e) {}
+
+                    // Apply the scroll position and make last match so the
+                    // direction calculation is deterministic.
+                    app.scroll.current = scrollPos;
+                    app.scroll.target = scrollPos;
+                    app.scroll.last = scrollPos;
+
+                    // Actualizar manualmente las posiciones de las tarjetas
+                    // (sin depender del estado frozen) para que WebGL tenga sus
+                    // valores correctos inmediatamente.
+                    try {
+                      const dir = app.scroll.current > app.scroll.last ? 'right' : 'left';
+                      app.cards.forEach(card => {
+                        try { card.update(app.scroll, dir); } catch (e) {}
+                      });
+                    } catch (e) {}
+
+                    // Forzar render y actualizar el DOM (updateCards aplicará
+                    // transform/opacity/clases)
+                    try {
+                      if (app.renderer && app.renderer.render) {
+                        app.renderer.render({ scene: app.scene, camera: app.camera });
+                      }
+                      try { updateCards(); } catch (e) {}
+                    } catch (e) {}
+                  } else {
+                    try { app.onCheck && app.onCheck(); } catch (e) {}
+                  }
+
+                  // Asegurar congelamiento en móvil
+                  // Resetear la referencia del centro para forzar reaplicar la
+                  // clase CSS en el loop de actualización del DOM.
+                  try { lastAppliedCenterRef.current = -1; } catch (e) {}
+
+                  // Descongelar brevemente para permitir que el loop de render
+                  // y el updateCards apliquen transformaciones/cEntrada en DOM,
+                  // luego volver a congelar para evitar interacción del usuario.
+                  try {
+                    if (app.unfreeze) app.unfreeze();
+                  } catch (e) {}
+                  setTimeout(() => {
+                    try { if (app.freeze) app.freeze(); } catch (e) {}
+                  }, 220);
+                } catch (e) {
+                  // ignorar pequeños errores
+                }
+            } else {
+              requestAnimationFrame(() => tryRestore(attempt + 1));
+            }
+          };
+          tryRestore();
+        }
+      }
+    });
+  };
+
+  const intersectionObserver = new IntersectionObserver(observerCallback, { threshold: 0.05 });
+  if (containerRef.current) intersectionObserver.observe(containerRef.current);
+
   return () => {
     window.removeEventListener('resize', debouncedResize);
     if (appRef.current) {
       appRef.current.destroy();
+    }
+    if (intersectionObserver) {
+      try { intersectionObserver.disconnect(); } catch (e) {}
     }
     // No center timeout to clear (class applied instantly)
   };
@@ -761,27 +1063,76 @@ const updateCards = () => {
       }
     }
   }, [isTransitioning]);
-
   // Triplicar proyectos para el loop infinito (asegura tarjetas visibles a ambos lados)
   const duplicatedProjects = [...projects, ...projects, ...projects];
 
-  // Referencia para el audio de selección
-  const selectedSoundRef = React.useRef(null);
-
-  // Inicializar el audio
-  React.useEffect(() => {
-    selectedSoundRef.current = new Audio('/sounds/LobbySounds/GameSelected.mp3');
-    selectedSoundRef.current.volume = 0.6;
-  }, []);
-
   const handlePlayClick = (projectId) => {
-    // Reproducir sonido antes de navegar
-    if (selectedSoundRef.current) {
-      selectedSoundRef.current.currentTime = 0;
-      selectedSoundRef.current.play();
-    }
+    // Reproducir sonido antes de navegar (hook)
+    try { playSelected(); } catch (e) {}
     onPlayClick(projectId);
   };
+
+  // Si estamos en móvil, renderizamos una carta estática centrada en lugar
+  // del carousel WebGL. Esto evita problemas de posición y es más barato.
+  const isMobileRender = typeof window !== 'undefined' && window.innerWidth <= 768;
+  if (isMobileRender) {
+    const project = projects.find(p => p.id === 'spaceinvaders') || projects[0] || duplicatedProjects[0];
+    const gameplayClasses = getGameplayClasses(project.id);
+    return (
+      <div className={styles.circularCarousel}>
+        <div className={styles.canvasContainer} />
+        {/* Asegurar que el contenedor ocupe la pantalla para centrar la carta */}
+        <div className={styles.cardsContainer} style={{ position: 'relative', minHeight: '100vh' }}>
+          <div className={`${styles.cardWrapper}`}>
+            <div
+              className={`${styles.carouselItem} ${styles.projectCard} ${styles[project.colorClass]} ${styles[project.id]}`}
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '80vw',
+                height: '110vw',
+                maxHeight: '80vh',
+                boxSizing: 'border-box'
+              }}
+            >
+              <div className={styles.background} />
+              <div className={styles.character} />
+              <div className={styles.cardHeader}>
+                <div className={styles.cardDot} />
+              </div>
+
+              <div className={styles.cardContent}>
+                <h3 className={styles.cardTitle}>{project.title}</h3>
+              </div>
+
+              <div className={styles.cardFooter}>
+                <div className={styles.playerInfo}>
+                  <div className={gameplayClasses.players1.classes.join(' ')}>
+                    <p>{gameplayClasses.players1.text}</p>
+                  </div>
+                  <div className={gameplayClasses.players2.classes.join(' ')}>
+                    <p>{gameplayClasses.players2.text}</p>
+                  </div>
+                </div>
+                <button
+                  className={styles.playButton}
+                  onClick={() => handlePlayClick(project.id)}
+                  tabIndex={-1}
+                >
+                  <div className={styles.playCont}>
+                    <div className={`${styles.playIcon} ${styles.playItem}`} />
+                    <p className={`${styles.playText} ${styles.playItem}`}>JUGAR</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.circularCarousel}>

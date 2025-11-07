@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import styles from '../styles/Puntajes.module.css';
 import { getSpaceInvadersScores, getSimonDiceScores } from '../../utils/scoreDatabase';
 import useMobileDetection from '../../hooks1942/useMobileDetection';
+import useLobbySound from '../../hooks/useLobbySound';
 
 const Puntajes = ({ animate }) => {
   // State for database scores (initially empty)
@@ -10,9 +11,9 @@ const Puntajes = ({ animate }) => {
 
   const [open, setOpen] = useState({ space: false, simon: false });
 
-  // Audio refs for open/close sounds
-  const openAudioRef = useRef(null);
-  const closeAudioRef = useRef(null);
+  // Hooks para reproducir los sonidos del menú
+  const playOpen = useLobbySound('/sounds/LobbySounds/PauseMenuOpen1.mp3', { volume: 0.6 });
+  const playClose = useLobbySound('/sounds/LobbySounds/NameSelectorClose.mp3', { volume: 0.6 });
 
   // Refs for measured-height accordion control
   const spaceBodyRef = useRef(null);
@@ -22,16 +23,7 @@ const Puntajes = ({ animate }) => {
   const spaceObserverRef = useRef(null);
   const simonObserverRef = useRef(null);
 
-  useEffect(() => {
-    try {
-      openAudioRef.current = new Audio('/sounds/LobbySounds/PauseMenuOpen1.mp3');
-      closeAudioRef.current = new Audio('/sounds/LobbySounds/NameSelectorClose.mp3');
-      openAudioRef.current.volume = 0.6;
-      closeAudioRef.current.volume = 0.6;
-    } catch (e) {
-      // ignore
-    }
-  }, []);
+  // no-op: useLobbySound hook inicializa los audios
 
   // Load scores from database on mount
   useEffect(() => {
@@ -246,12 +238,12 @@ const Puntajes = ({ animate }) => {
                   if (open.space) {
                     // closing
                     setOpen({ space: false, simon: false });
-                    playSound(closeAudioRef.current);
+                    try { playClose(); } catch (e) {}
                   } else {
                     // opening space; if simon open, close it first
-                    if (open.simon) playSound(closeAudioRef.current);
+                    if (open.simon) try { playClose(); } catch (e) {}
                     setOpen({ space: true, simon: false });
-                    playSound(openAudioRef.current);
+                    try { playOpen(); } catch (e) {}
                   }
                 }}
                 aria-expanded={open.space}
@@ -312,11 +304,11 @@ const Puntajes = ({ animate }) => {
                 onClick={() => {
                   if (open.simon) {
                     setOpen({ space: false, simon: false });
-                    playSound(closeAudioRef.current);
+                    try { playClose(); } catch (e) {}
                   } else {
-                    if (open.space) playSound(closeAudioRef.current);
+                    if (open.space) try { playClose(); } catch (e) {}
                     setOpen({ space: false, simon: true });
-                    playSound(openAudioRef.current);
+                    try { playOpen(); } catch (e) {}
                   }
                 }}
                 aria-expanded={open.simon}

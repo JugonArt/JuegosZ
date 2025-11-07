@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import styles from '../styles/pausemenu.module.css';
 import { useBGM } from '../../utils/bgmManager';
+import useMobileDetection from '../../hooks1942/useMobileDetection';
 
 const MENU_SOUNDS = {
   open: new Audio('/sounds/LobbySounds/PauseMenuOpen1.mp3'),
@@ -62,6 +63,7 @@ const PauseMenu = ({
 
   // Inicializar el gestor de música
   const bgm = useBGM();
+  const { isMobile } = useMobileDetection();
 
   // Función universal para fullscreen si no se pasa por prop
   const handleFullScreen = useCallback(() => {
@@ -154,14 +156,15 @@ const PauseMenu = ({
     list.push({ type: 'volver', action: () => handleExit(onTogglePause), disabled: isExiting || isOpening });
     if (onBackToPlayerSelect) list.push({ type: 'jugadores', action: () => handleExit(onBackToPlayerSelect), disabled: isExiting || isOpening });
     list.push({ type: 'menu', action: () => handleExit(onBackToMenu), disabled: isExiting || isOpening });
-    list.push({ type: 'fullscreen', action: handleFullScreen, disabled: isExiting || isOpening });
+    // No mostrar pantalla completa en dispositivos móviles
+    if (!isMobile) list.push({ type: 'fullscreen', action: handleFullScreen, disabled: isExiting || isOpening });
     if (onResetGame) list.push({ type: 'reset', action: () => handleExit(onResetGame), disabled: isExiting || isOpening });
     customButtons.forEach((button) => {
       list.push({ type: 'custom', action: button.onClick, disabled: button.disabled });
     });
     list.push({ type: 'volume', action: null, disabled: false });
     return list;
-  }, [handleExit, onTogglePause, isExiting, isOpening, onBackToPlayerSelect, onBackToMenu, handleFullScreen, onResetGame, customButtons]);
+  }, [handleExit, onTogglePause, isExiting, isOpening, onBackToPlayerSelect, onBackToMenu, handleFullScreen, onResetGame, customButtons, isMobile]);
 
   // Handlers para el div de botones para controlar la prioridad del mouse
   const handleButtonsMouseEnter = () => {
@@ -361,43 +364,45 @@ const PauseMenu = ({
 
   // Función auxiliar para obtener el índice de foco esperado para cada botón
   const getButtonFocusIndex = useCallback((type, index = 0) => {
-        let currentFocusIndex = 0;
-        
-        // Botón 1: Volver al juego
-        if (type === 'volver') return currentFocusIndex;
-        currentFocusIndex++;
-        
-        // Botón 2: Cambiar jugadores
-        if (onBackToPlayerSelect) {
-            if (type === 'jugadores') return currentFocusIndex;
-            currentFocusIndex++;
-        }
-        
-        // Botón 3: Volver al menú
-        if (type === 'menu') return currentFocusIndex;
-        currentFocusIndex++;
-        
-        // Botón 4: Pantalla completa
-        if (type === 'fullscreen') return currentFocusIndex;
-        currentFocusIndex++;
+    let currentFocusIndex = 0;
 
-        // Botón 5: Reiniciar juego
-        if (onResetGame) {
-            if (type === 'reset') return currentFocusIndex;
-            currentFocusIndex++;
-        }
-        
-        // Botones Custom
-        if (type === 'custom') {
-            return currentFocusIndex + index;
-        }
-        currentFocusIndex += customButtons.length;
-        
-        // Botón Final: Volumen
-        if (type === 'volume') return currentFocusIndex;
-        
-        return -1; // No encontrado
-  }, [onBackToPlayerSelect, onResetGame, customButtons]);
+    // Botón 1: Volver al juego
+    if (type === 'volver') return currentFocusIndex;
+    currentFocusIndex++;
+
+    // Botón 2: Cambiar jugadores
+    if (onBackToPlayerSelect) {
+      if (type === 'jugadores') return currentFocusIndex;
+      currentFocusIndex++;
+    }
+
+    // Botón 3: Volver al menú
+    if (type === 'menu') return currentFocusIndex;
+    currentFocusIndex++;
+
+    // Botón 4: Pantalla completa (solo si NO es mobile)
+    if (!isMobile) {
+      if (type === 'fullscreen') return currentFocusIndex;
+      currentFocusIndex++;
+    }
+
+    // Botón 5: Reiniciar juego
+    if (onResetGame) {
+      if (type === 'reset') return currentFocusIndex;
+      currentFocusIndex++;
+    }
+
+    // Botones Custom
+    if (type === 'custom') {
+      return currentFocusIndex + index;
+    }
+    currentFocusIndex += customButtons.length;
+
+    // Botón Final: Volumen
+    if (type === 'volume') return currentFocusIndex;
+
+    return -1; // No encontrado
+  }, [onBackToPlayerSelect, onResetGame, customButtons, isMobile]);
 
   return (
     <>
@@ -474,18 +479,20 @@ const PauseMenu = ({
                 <div className={styles.backgroundText} />
               </button>
 
-              {/* Pantalla completa */}
-              <button
-                className={`${styles.menuButton} ${focusedIndex === getButtonFocusIndex('fullscreen') && !isMouseActiveRef.current ? styles.hover : ""}`} 
-                style={{ "--i": 2 }}
-                onClick={() => handleButtonClick(handleFullScreen)}
-                onMouseEnter={handleButtonHover}
-                disabled={isExiting || isOpening}
-                tabIndex={focusedIndex === getButtonFocusIndex('fullscreen') ? 0 : -1}
-              >
-                <span><i className="fa-solid fa-expand"></i>P</span>antalla completa
-                <div className={styles.backgroundText} />
-              </button>
+              {/* Pantalla completa (oculta en móviles) */}
+              {!isMobile && (
+                <button
+                  className={`${styles.menuButton} ${focusedIndex === getButtonFocusIndex('fullscreen') && !isMouseActiveRef.current ? styles.hover : ""}`} 
+                  style={{ "--i": 2 }}
+                  onClick={() => handleButtonClick(handleFullScreen)}
+                  onMouseEnter={handleButtonHover}
+                  disabled={isExiting || isOpening}
+                  tabIndex={focusedIndex === getButtonFocusIndex('fullscreen') ? 0 : -1}
+                >
+                  <span><i className="fa-solid fa-expand"></i>P</span>antalla completa
+                  <div className={styles.backgroundText} />
+                </button>
+              )}
 
               {/* Reiniciar juego */}
               {onResetGame && (

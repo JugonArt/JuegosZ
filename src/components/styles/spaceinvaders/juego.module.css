@@ -1769,8 +1769,9 @@
 
 @media (max-width: 768px) {
     .gameArea{
-    height: 70vh !important;
+    height: 60vh !important;
     top: -20vh !important;
+    transform: scale(1);
   }
   .alienCounters {
     display: none;
@@ -1980,6 +1981,9 @@
   .transitionContent p {
   font-size: 2vh;
   margin: 0rem 0;
+  }
+  .shieldHealthBar{
+    transform: scale(0.5) translateY(-4vh) !important;
   }
   .continueText {
     font-size: 2vh !important;

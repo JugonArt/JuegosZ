@@ -455,6 +455,7 @@ z-index: -1;
         font-size: 4vh; 
         padding: 1vw !important;
         border-radius: 20px;
+        top: 5vh;
         width: 2vw !important;
         backdrop-filter: none !important;
     }
